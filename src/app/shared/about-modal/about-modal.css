@@ -1,0 +1,9 @@
+.aboutmodal {
+   max-width: 60rem;
+   max-height: 45rem;
+   overflow: auto;
+}
+
+.closer {
+   justify-self: flex-end;
+}

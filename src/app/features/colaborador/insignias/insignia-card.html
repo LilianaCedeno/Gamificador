@@ -1,10 +1,15 @@
 <article class="imp-card">
   <h3>{{ categoria().nombre }}</h3>
   <div class="medalla" [attr.data-nivel]="progreso().insigniaActual?.nivel" aria-hidden="true">
-    {{ progreso().insigniaActual ? '★' : '☆' }}
+    @if (progreso().insigniaActual; as insignia) {
+      <img medalla [src]="imagenesMedalla[insignia.nivel]" alt="" decoding="async" />
+    } @else {
+      <span class="medalla-placeholder">☆</span>
+    }
   </div>
   <p class="nivel">{{ progreso().insigniaActual ? (progreso().insigniaActual!.nivel | titlecase) : 'Sin insignia obtenida' }}</p>
   <p class="estrellas">{{ progreso().estrellas }} estrellas acumuladas</p>
+  <div class="meta-insignia">
   @if (progreso().proximaInsignia; as siguiente) {
     <label [for]="'progreso-' + categoria().id">Hacia {{ siguiente.nivel | titlecase }} · {{ progreso().estrellas }}/{{ siguiente.umbral }}</label>
     <progress [id]="'progreso-' + categoria().id" [value]="progreso().estrellas" [max]="siguiente.umbral"></progress>
@@ -12,6 +17,8 @@
   } @else {
     <p class="maximo">Nivel máximo alcanzado</p>
   }
+  </div>
+  <div class="ascensos">
   @if (progreso().historialAscensos.length) {
     <details><summary>Historia de ascensos</summary>
       <ul>@for (ascenso of progreso().historialAscensos; track ascenso.insignia.nivel) {
@@ -19,4 +26,5 @@
       }</ul>
     </details>
   }
+  </div>
 </article>

@@ -15,6 +15,9 @@ describe('Historial', () => {
   }
   it('filtra recibidos y enviados conservando trazabilidad', () => {
     const f = preparar();
+    expect(f.nativeElement.querySelector('.historial').getAttribute('tabindex')).toBe('0');
+    expect(f.nativeElement.querySelector('.historial').getAttribute('aria-label')).toContain('desplazamiento vertical');
+    expect(f.nativeElement.querySelector('.historial .filtros')).toBeNull();
     expect(f.componentInstance.visibles()).toHaveLength(28);
     expect(f.nativeElement.textContent).toContain('Sara Prueba');
     expect(f.nativeElement.textContent).toContain('Cliente de ejemplo');

@@ -1,12 +1,32 @@
-:host { display: block; height: 100%; }
-article { height: 100%; text-align: center; }
-h3 { min-height: 3rem; font-size: 1.05rem; }
-.medalla { margin: var(--imp-space) auto; width: 4rem; height: 4rem; display: grid; place-items: center; border: 2px solid currentColor; border-radius: 50%; font-size: 2.5rem; color: var(--imp-blue); }
-[data-nivel="BRONCE"] { background: var(--imp-bronze); color: var(--imp-ink); }
-[data-nivel="PLATA"] { background: var(--imp-silver); color: var(--imp-ink); }
-[data-nivel="ORO"] { background: var(--imp-gold); color: var(--imp-ink); }
-.nivel, .estrellas { font-weight: 700; }
-label, p, li { font-size: .9rem; }
-progress { display: block; width: 100%; height: .8rem; margin: var(--imp-space) 0; accent-color: var(--imp-teal); }
-.maximo { padding: var(--imp-space); border-radius: var(--imp-radius); background: var(--imp-sky); }
-details { margin-top: var(--imp-space); text-align: left; }
+:host { display: flex; min-width: 0; }
+article.imp-card { flex: 1; min-width: 0; padding: .6rem .75rem; text-align: center; display: flex; flex-direction: column; align-items: stretch; }
+h3 { min-height: 2.1rem; font-size: .85rem; font-weight: 600; line-height: 1.25; }
+/* +40% respecto de 3–4rem; el límite de ancho protege las tarjetas estrechas. */
+.medalla { --medal-color: var(--imp-secondary); position: relative; isolation: isolate; margin: .2rem auto; width: clamp(4.2rem, 6.3vw, 5.6rem); max-width: 100%; aspect-ratio: 1; display: grid; place-items: center; color: var(--medal-color); border: 1px solid var(--medal-color); border-radius: 50%; background: radial-gradient(circle, #4d8dba18, var(--imp-ink) 70%); box-shadow: 0 0 0 3px #061a2438; }
+.medalla::before { content: ''; position: absolute; inset: .4rem; border: 1px dashed currentColor; border-radius: inherit; opacity: .4; z-index: -1; }
+.medalla-placeholder { font-size: 2.8rem; line-height: 1; }
+[data-nivel="BRONCE"] { --medal-color: var(--imp-bronze); }
+[data-nivel="PLATA"] { --medal-color: var(--imp-silver); }
+[data-nivel="ORO"] { --medal-color: var(--imp-gold); }
+.nivel { font-size: .9rem; font-weight: 650; }
+.estrellas { font-size: .8rem; color: var(--imp-muted); margin-block: .1rem .4rem; }
+label, p, li { font-size: .8rem; }
+label { text-align: left; color: var(--imp-muted); }
+progress { appearance: none; display: block; width: 100%; height: .35rem; border: 0; border-radius: 1rem; overflow: hidden; margin: .3rem 0; background: var(--imp-ink); accent-color: var(--imp-teal); }
+progress::-webkit-progress-bar { background: var(--imp-ink); }
+progress::-webkit-progress-value { background: var(--imp-teal); border-radius: 1rem; }
+progress::-moz-progress-bar { background: var(--imp-teal); border-radius: 1rem; }
+.maximo { padding: .3rem; border: 1px solid var(--imp-border); border-radius: .5rem; background: var(--imp-ink); color: var(--imp-text); }
+details { margin-top: .2rem; text-align: left; color: var(--imp-muted); }
+details summary { padding-block: .35rem; min-height: 2.75rem; }
+details ul { padding-left: 1rem; }
+.ascensos { min-height: 2.75rem; margin-top: auto; }
+.meta-insignia { min-width: 0; }
+/* La altura sigue al contenido más alto: sin límites ni recortes del desplegable. */
+@supports (grid-template-rows: subgrid) {
+  @media (min-width: 1101px) {
+    :host { display: grid; grid-row: span 6; grid-template-rows: subgrid; }
+    article.imp-card { display: grid; grid-row: span 6; grid-template-rows: subgrid; }
+    .ascensos { margin-top: 0; }
+  }
+}

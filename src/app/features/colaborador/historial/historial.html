@@ -2,7 +2,7 @@
   <button type="button" [attr.aria-pressed]="filtro() === 'RECIBIDOS'" (click)="filtro.set('RECIBIDOS')">Recibidos</button>
   <button type="button" [attr.aria-pressed]="filtro() === 'ENVIADOS'" (click)="filtro.set('ENVIADOS')">Enviados</button>
 </div>
-<ul class="historial">
+<ul class="historial" tabindex="0" aria-label="Lista de reconocimientos; desplazamiento vertical">
   @for (r of visibles(); track r.id) {
     <li class="imp-card">
       <div class="titulo"><h3>{{ categoria(r.categoriaId) }}</h3><span class="estado">{{ r.estado | titlecase }}</span></div>

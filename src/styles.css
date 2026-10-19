@@ -7,12 +7,16 @@
   --imp-ink: #061A24;
   --imp-blue: #0B3A53;
   --imp-teal: #0FA3B1;
-  --imp-sky: #B5E2FA;
-  --imp-background: #F3FAFF;
+  --imp-secondary: #4D8DBA;
+  --imp-sky: var(--imp-secondary);
+  --imp-background: #061A24;
+  --imp-text: #F3FAFF;
+  --imp-muted: #C1D4E1;
+  --imp-border: #4D8DBA66;
   --imp-bronze: #CD9C70;
   --imp-silver: #D5DDE3;
   --imp-gold: #EAC85E;
-  --imp-font: Arial, sans-serif;
+  --imp-font: 'Segoe UI', Arial, sans-serif;
   --imp-space: .75rem;
   --imp-radius: 1rem;
 }
@@ -22,11 +26,18 @@
 }
 .impulsa-shell h1, .impulsa-shell h2, .impulsa-shell h3,
 .impulsa-shell p, .impulsa-shell ul, .impulsa-shell dl, .impulsa-shell dd { margin: 0; }
-.impulsa-shell .imp-card { background: white; padding: 1.25rem; border: 1px solid var(--imp-sky); border-radius: var(--imp-radius); box-shadow: 0 3px 12px #061a2406; }
-.impulsa-shell button { padding: .7rem 1rem; border: 1px solid var(--imp-blue); border-radius: .5rem; background: white; color: var(--imp-blue); font: inherit; font-weight: 600; cursor: pointer; min-height: 44px; }
-.impulsa-shell .imp-primary { color: white; background: var(--imp-blue); }
+.impulsa-shell .imp-card { background: var(--imp-blue); padding: 1.5rem; border: 1px solid var(--imp-border); border-radius: var(--imp-radius); box-shadow: 0 12px 28px #00000024; }
+.impulsa-shell button { padding: .7rem 1rem; border: 1px solid var(--imp-secondary); border-radius: .65rem; background: var(--imp-ink); color: var(--imp-text); font: inherit; font-weight: 600; cursor: pointer; min-height: 44px; }
+.impulsa-shell button:hover:not(:disabled) { border-color: var(--imp-teal); box-shadow: 0 0 0 1px var(--imp-teal); }
+.impulsa-shell .imp-primary { color: var(--imp-ink); background: var(--imp-teal); border-color: var(--imp-teal); }
 .impulsa-shell button:disabled { opacity: .6; cursor: wait; }
-.impulsa-shell a { color: var(--imp-blue); }
+.impulsa-shell a { color: var(--imp-text); text-underline-offset: .25em; }
 .impulsa-shell summary { cursor: pointer; min-height: 44px; display: list-item; padding-block: .6rem; }
-.impulsa-shell :focus-visible { outline: 3px solid var(--imp-blue); outline-offset: 3px; }
-.impulsa-shell header :focus-visible { outline-color: var(--imp-sky); }
+.impulsa-shell :focus-visible { outline: 3px solid var(--imp-teal); outline-offset: 4px; }
+/* Ranura para las futuras imágenes oficiales de medallas. */
+.impulsa-shell .medalla img[medalla] { display: block; width: 100%; height: 100%; object-fit: contain; }
+.impulsa-shell .medalla:has(img[medalla]) { background: transparent; border-color: transparent; box-shadow: none; border-radius: 0; }
+.impulsa-shell .medalla:has(img[medalla])::before,
+.impulsa-shell .medalla:has(img[medalla]) .medalla-placeholder { display: none; }
+/* Evita un marco claro del documento únicamente mientras se muestra el dashboard. */
+html:has(app-colaborador-dashboard), body:has(app-colaborador-dashboard) { background: var(--imp-background); }

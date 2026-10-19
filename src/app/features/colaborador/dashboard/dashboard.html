@@ -1,0 +1,51 @@
+<div class="impulsa-shell">
+  <a class="saltar" href="#contenido-impulsa">Saltar al contenido</a>
+  <header class="cabecera">
+    <a class="marca" href="#contenido-impulsa" aria-label="IMPULSA, inicio del dashboard">✦ IMPULSA</a>
+    <nav aria-label="Navegación del colaborador"><a href="#insignias">Mis insignias</a><a href="#avances">Mis avances</a><a href="#historial">Historial</a></nav>
+    <span class="etiqueta">Portal de logros</span>
+  </header>
+  <main id="contenido-impulsa" tabindex="-1" [attr.aria-busy]="cargando()">
+    <div class="intro"><div><p class="sobrelinea">TU CRECIMIENTO, PASO A PASO</p><h1>Mi espacio de logros</h1><p>Cada aporte cuenta. Descubre cómo vas avanzando.</p></div></div>
+    <aside class="demo" aria-label="Datos de demostración">
+      <p><strong>Demostración con datos ficticios.</strong> Perfil de Ana Ejemplo · referencia: 19/10/2026. Los cambios se pierden al recargar.</p>
+      <label for="escenario">Escenario de prueba</label>
+      <select id="escenario" [value]="escenario()" [disabled]="cargando() || enviando()" (change)="cargar($any($event.target).value)">
+        <option value="normal">Con reconocimientos</option><option value="vacio">Sin reconocimientos</option><option value="error">Error de carga</option>
+      </select>
+    </aside>
+    @if (cargando()) { <p class="imp-card" role="status">Cargando tu espacio…</p> }
+    @if (error()) { <div class="imp-card aviso" role="alert"><p>{{ error() }}</p>@if (!datos()) { <button type="button" (click)="cargar('normal')">Reintentar</button> }</div> }
+    @if (mensaje()) { <p class="imp-card aviso" role="status">{{ mensaje() }}</p> }
+    @if (!cargando()) { @if (datos(); as d) {
+      <section class="perfil imp-card" aria-labelledby="titulo-perfil">
+        @if (!fotoFallida()) { <img class="foto" [src]="d.perfil.fotografiaUrl" [alt]="'Fotografía de ' + d.perfil.nombre + ' ' + d.perfil.apellido" (error)="fotoFallida.set(true)" /> }
+        @else { <div class="foto iniciales" role="img" aria-label="Fotografía no disponible de Ana Ejemplo">{{ d.perfil.nombre[0] }}{{ d.perfil.apellido[0] }}</div> }
+        <div class="presentacion"><p class="sobrelinea">MI PERFIL</p><h2 id="titulo-perfil">{{ d.perfil.nombre }} {{ d.perfil.apellido }}</h2><p>{{ d.perfil.cargo }}</p><a [href]="'mailto:' + d.perfil.correoCorporativo">{{ d.perfil.correoCorporativo }}</a></div>
+        <dl><div><dt>Antigüedad</dt><dd>{{ d.antiguedad.anios }} años, {{ d.antiguedad.meses }} meses y {{ d.antiguedad.dias }} días</dd></div><div><dt>Fecha de ingreso</dt><dd>{{ d.perfil.fechaIngreso | date:'dd/MM/yyyy':'UTC' }}</dd></div><div><dt>Identificación interna</dt><dd>{{ d.perfil.identificacionInterna }}</dd></div></dl>
+      </section>
+      <section id="insignias" aria-labelledby="titulo-insignias">
+        <div class="encabezado-seccion"><div><p class="sobrelinea">CADA ESTRELLA ES UN APORTE</p><h2 id="titulo-insignias">Mis insignias y progreso</h2></div><p>Bronce → Plata → Oro</p></div>
+        <div class="insignias">@for (categoria of d.categorias; track categoria.id; let i = $index) {
+          <app-insignia-card [categoria]="categoria" [progreso]="d.progresos[i]" />
+        } @empty { <p class="imp-card">Todavía no hay categorías disponibles.</p> }</div>
+      </section>
+      <section id="avances" aria-labelledby="titulo-avances">
+        <h2 id="titulo-avances">Mis avances</h2>
+        <div class="metricas">
+          <article class="imp-card"><h3>Estrellas acumuladas</h3><strong>{{ estrellas }}</strong><p>En todas tus categorías</p></article>
+          <article class="imp-card"><h3>Logros aprobados</h3><strong>{{ estrellas }}</strong><p>Reconocimientos validados por People</p></article>
+          <article class="imp-card"><h3>Progreso mensual · {{ d.resumen.mes }}</h3><strong>+{{ d.resumen.estrellasObtenidas }}</strong><p>Estrellas · {{ d.resumen.insigniasObtenidas.length }} ascensos de insignia</p></article>
+        </div>
+      </section>
+      <section id="historial" aria-labelledby="titulo-historial">
+        <div class="encabezado-seccion"><div><p class="sobrelinea">APORTES QUE DEJAN HUELLA</p><h2 id="titulo-historial">Historial y trazabilidad</h2></div><button id="abrir-reconocer" type="button" class="imp-primary" [attr.aria-expanded]="formularioVisible()" aria-controls="reconocer-panel" (click)="abrirFormulario()">Reconocer a un compañero</button></div>
+        @if (formularioVisible()) {
+          <div id="reconocer-panel" class="imp-card formulario"><app-reconocimiento-form [companeros]="d.companeros" [categorias]="d.categorias" [enviando]="enviando()" (enviar)="enviar($event)" (cancelar)="cerrarFormulario()" /></div>
+        }
+        <app-historial [reconocimientos]="d.historial" [personas]="personas" [categorias]="d.categorias" [colaboradorId]="d.perfil.id" />
+      </section>
+    } }
+    <footer>IMPULSA · Reconocemos tu aporte, acompañamos tu crecimiento.</footer>
+  </main>
+</div>

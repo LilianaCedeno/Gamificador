@@ -1,3 +1,32 @@
 *{
    padding: 0.5rem;
 }/* You can add global styles to this file, and also import other style files */
+
+/* Tokens IMPULSA; las reglas visuales se acotan a las nuevas vistas. */
+:root {
+  --imp-ink: #061A24;
+  --imp-blue: #0B3A53;
+  --imp-teal: #0FA3B1;
+  --imp-sky: #B5E2FA;
+  --imp-background: #F3FAFF;
+  --imp-bronze: #CD9C70;
+  --imp-silver: #D5DDE3;
+  --imp-gold: #EAC85E;
+  --imp-font: Arial, sans-serif;
+  --imp-space: .75rem;
+  --imp-radius: 1rem;
+}
+.impulsa-shell, .impulsa-shell *, .impulsa-shell *::before, .impulsa-shell *::after {
+  box-sizing: border-box;
+  padding: 0;
+}
+.impulsa-shell h1, .impulsa-shell h2, .impulsa-shell h3,
+.impulsa-shell p, .impulsa-shell ul, .impulsa-shell dl, .impulsa-shell dd { margin: 0; }
+.impulsa-shell .imp-card { background: white; padding: 1.25rem; border: 1px solid var(--imp-sky); border-radius: var(--imp-radius); box-shadow: 0 3px 12px #061a2406; }
+.impulsa-shell button { padding: .7rem 1rem; border: 1px solid var(--imp-blue); border-radius: .5rem; background: white; color: var(--imp-blue); font: inherit; font-weight: 600; cursor: pointer; min-height: 44px; }
+.impulsa-shell .imp-primary { color: white; background: var(--imp-blue); }
+.impulsa-shell button:disabled { opacity: .6; cursor: wait; }
+.impulsa-shell a { color: var(--imp-blue); }
+.impulsa-shell summary { cursor: pointer; min-height: 44px; display: list-item; padding-block: .6rem; }
+.impulsa-shell :focus-visible { outline: 3px solid var(--imp-blue); outline-offset: 3px; }
+.impulsa-shell header :focus-visible { outline-color: var(--imp-sky); }

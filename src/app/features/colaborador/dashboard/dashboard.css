@@ -1,0 +1,44 @@
+:host { display: block; padding: 0; }
+.impulsa-shell { background: var(--imp-background); color: var(--imp-ink); font-family: var(--imp-font); line-height: 1.5; min-height: 100vh; }
+.cabecera { background: var(--imp-ink); color: white; display: flex; align-items: center; gap: 2rem; padding: 1.25rem max(1.25rem, calc((100vw - 1200px) / 2)); flex-wrap: wrap; }
+.cabecera a { color: white; text-decoration: none; }
+.marca { font-size: 1.6rem; font-weight: 800; letter-spacing: .12em; }
+nav { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+nav a:hover { text-decoration: underline; }
+.etiqueta { margin-left: auto; color: var(--imp-sky); font-size: .85rem; }
+main { max-width: 1250px; padding: 2rem 1.5rem; margin: auto; }
+.intro { margin-bottom: 1.5rem; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); margin-bottom: .4rem; }
+h2 { font-size: 1.4rem; }
+.sobrelinea { font-weight: 700; font-size: .75rem; letter-spacing: .12em; color: var(--imp-blue); margin-bottom: .4rem; }
+.demo { border-left: 4px solid var(--imp-teal); background: var(--imp-sky); padding: 1rem; border-radius: .5rem; margin-bottom: 1.5rem; font-size: .85rem; }
+.demo label { display: inline-block; margin: .75rem .75rem 0 0; }
+.demo select { padding: .4rem; border: 1px solid var(--imp-blue); border-radius: .4rem; background: white; max-width: 100%; }
+.perfil { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.foto { width: 6rem; height: 6rem; object-fit: cover; border-radius: 50%; background: var(--imp-sky); }
+.iniciales { display: grid; place-items: center; font-size: 2rem; font-weight: 700; }
+.presentacion { flex: 1; min-width: 12rem; overflow-wrap: anywhere; }
+dl { display: grid; gap: .5rem; }
+dt { font-size: .8rem; color: var(--imp-blue); }
+dd { font-weight: 600; }
+section { margin-bottom: 2rem; scroll-margin-top: 1rem; }
+.encabezado-seccion { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.insignias { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 1rem; }
+.metricas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+.metricas h3 { font-size: .95rem; }
+.metricas strong { display: block; font-size: 2.3rem; color: var(--imp-blue); }
+.metricas p { font-size: .85rem; }
+.formulario, .aviso { margin-bottom: 1rem; }
+.aviso { border-left: 4px solid var(--imp-blue); }
+footer { border-top: 1px solid var(--imp-sky); padding-top: 1rem; font-size: .85rem; color: var(--imp-blue); }
+.saltar { position: absolute; left: 1rem; top: -10rem; background: white; padding: 1rem; z-index: 10; }
+.saltar:focus { top: 1rem; }
+@media (max-width: 700px) {
+  main { padding: 1.25rem 1rem; }
+  .cabecera { padding: 1rem; gap: 1rem; }
+  nav { order: 3; width: 100%; gap: 1rem; font-size: .9rem; }
+  .etiqueta { margin-left: 0; }
+  .metricas { grid-template-columns: 1fr; }
+  .perfil { align-items: flex-start; }
+  .perfil dl { width: 100%; }
+}

@@ -1,0 +1,26 @@
+<div class="filtros" role="group" aria-label="Filtrar reconocimientos">
+  <button type="button" [attr.aria-pressed]="filtro() === 'RECIBIDOS'" (click)="filtro.set('RECIBIDOS')">Recibidos</button>
+  <button type="button" [attr.aria-pressed]="filtro() === 'ENVIADOS'" (click)="filtro.set('ENVIADOS')">Enviados</button>
+</div>
+<ul class="historial">
+  @for (r of visibles(); track r.id) {
+    <li class="imp-card">
+      <div class="titulo"><h3>{{ categoria(r.categoriaId) }}</h3><span class="estado">{{ r.estado | titlecase }}</span></div>
+      <p>{{ r.motivo }}</p>
+      <p class="meta"><time [attr.datetime]="r.fecha">{{ r.fecha | date:'dd/MM/yyyy HH:mm':'UTC' }}</time> UTC · De {{ emisor(r) }} · Para {{ nombre(r.destinatarioId) }}</p>
+      <details><summary>Detalle y evidencia</summary>
+        <p>Referencia: {{ r.id }}</p>
+        @if (r.origen === 'EXTERNO') { <p>Registrado por {{ nombre(r.registradoPorId) }} · {{ r.emisorExterno.correo }}</p> }
+        @if (r.estado !== 'PENDIENTE') {
+          <p>Decisión de {{ nombre(r.validadoPorId!) }} · {{ r.fechaDecision | date:'dd/MM/yyyy HH:mm':'UTC' }} UTC</p>
+        } @else { <p>Pendiente de revisión por People. Todavía no suma estrellas.</p> }
+        <ul>@for (e of r.evidencias; track e.id) {
+          <li>{{ e.tipo }} ·
+            @if (enlaceDisponible(e.url)) { <a [href]="e.url" target="_blank" rel="noopener noreferrer">{{ e.nombre }} (abre otra pestaña)</a> }
+            @else { <span>{{ e.nombre }} · referencia ficticia sin archivo disponible</span> }
+          </li>
+        } @empty { <li>Sin evidencia adjunta.</li> }</ul>
+      </details>
+    </li>
+  } @empty { <li class="imp-card" role="status">No hay reconocimientos {{ filtro() === 'RECIBIDOS' ? 'recibidos' : 'enviados' }}.</li> }
+</ul>

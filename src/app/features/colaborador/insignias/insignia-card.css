@@ -1,0 +1,12 @@
+:host { display: block; height: 100%; }
+article { height: 100%; text-align: center; }
+h3 { min-height: 3rem; font-size: 1.05rem; }
+.medalla { margin: var(--imp-space) auto; width: 4rem; height: 4rem; display: grid; place-items: center; border: 2px solid currentColor; border-radius: 50%; font-size: 2.5rem; color: var(--imp-blue); }
+[data-nivel="BRONCE"] { background: var(--imp-bronze); color: var(--imp-ink); }
+[data-nivel="PLATA"] { background: var(--imp-silver); color: var(--imp-ink); }
+[data-nivel="ORO"] { background: var(--imp-gold); color: var(--imp-ink); }
+.nivel, .estrellas { font-weight: 700; }
+label, p, li { font-size: .9rem; }
+progress { display: block; width: 100%; height: .8rem; margin: var(--imp-space) 0; accent-color: var(--imp-teal); }
+.maximo { padding: var(--imp-space); border-radius: var(--imp-radius); background: var(--imp-sky); }
+details { margin-top: var(--imp-space); text-align: left; }

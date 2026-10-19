@@ -1,0 +1,31 @@
+<form (ngSubmit)="submit()" [formGroup]="formulario" aria-labelledby="titulo-reconocer">
+  <h2 id="titulo-reconocer" tabindex="-1">Reconocer a un compañero</h2>
+  <p>Tu reconocimiento quedará pendiente de People. Solo una aprobación suma una estrella.</p>
+  <fieldset [disabled]="enviando()">
+    <legend>Datos del reconocimiento</legend>
+    <label for="destinatario">Compañero (obligatorio)</label>
+    <select id="destinatario" formControlName="destinatarioId" required>
+      <option value="">Selecciona un compañero</option>
+      @for (c of companeros(); track c.id) { <option [value]="c.id">{{ c.nombre }} {{ c.apellido }}</option> }
+    </select>
+    <label for="categoria">Categoría (obligatoria)</label>
+    <select id="categoria" formControlName="categoriaId" required>
+      <option value="">Selecciona una categoría</option>
+      @for (c of categorias(); track c.id) { @if (c.activa) { <option [value]="c.id">{{ c.nombre }}</option> } }
+    </select>
+    <label for="motivo">Motivo (obligatorio)</label>
+    <textarea id="motivo" formControlName="motivo" rows="4" maxlength="1000" required aria-describedby="ayuda-motivo"></textarea>
+    <small id="ayuda-motivo">Hasta 1000 caracteres. Usa solo datos ficticios en esta demostración.</small>
+    <label for="enlace">Enlace de respaldo (opcional)</label>
+    <input id="enlace" type="url" formControlName="enlace" placeholder="https://" />
+    <label for="archivo">Archivo PDF o JPG (opcional)</label>
+    <input id="archivo" type="file" accept="application/pdf,image/jpeg,.pdf,.jpg,.jpeg" (change)="seleccionarArchivo($event)" aria-describedby="ayuda-archivo" />
+    <small id="ayuda-archivo">Simulación local: solo se conserva el nombre del archivo; su contenido no se sube ni se almacena.</small>
+    @if (archivo) { <p>Archivo seleccionado: {{ archivo.name }}</p> }
+  </fieldset>
+  @if (error) { <p class="error" role="alert">{{ error }}</p> }
+  <div class="acciones">
+    <button type="submit" class="imp-primary" [disabled]="enviando()">{{ enviando() ? 'Enviando…' : 'Enviar reconocimiento' }}</button>
+    <button type="button" [disabled]="enviando()" (click)="cancelar.emit()">Cancelar</button>
+  </div>
+</form>

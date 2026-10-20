@@ -2,11 +2,11 @@ form { max-width: 46rem; }
 fieldset { border: 0; display: grid; gap: var(--imp-space); margin: var(--imp-space) 0; min-width: 0; }
 legend { font-size: 1rem; font-weight: 700; margin-bottom: var(--imp-space); }
 label { font-weight: 600; margin-top: var(--imp-space); }
-input, select, textarea { width: 100%; min-width: 0; padding: .85rem; border: 1px solid var(--imp-secondary); border-radius: .65rem; color: var(--imp-text); background: var(--imp-ink); font: inherit; }
+input, select, textarea { width: 100%; min-width: 0; padding: .85rem; border: 1px solid var(--imp-secondary); border-radius: .65rem; color: var(--imp-text); background: var(--imp-control); font: inherit; }
 textarea { resize: vertical; }
 input::placeholder { color: var(--imp-muted); }
-input[type="file"]::file-selector-button { background: var(--imp-blue); color: var(--imp-text); border: 1px solid var(--imp-secondary); padding: .5rem; border-radius: .4rem; margin-right: .75rem; }
+input[type="file"]::file-selector-button { background: var(--imp-surface); color: var(--imp-text); border: 1px solid var(--imp-secondary); padding: .5rem; border-radius: .4rem; margin-right: .75rem; }
 small, form > p { color: var(--imp-muted); }
 .acciones { display: flex; gap: var(--imp-space); flex-wrap: wrap; }
-.error { padding: var(--imp-space); border-left: 3px solid var(--imp-teal); background: var(--imp-ink); font-weight: 600; margin-bottom: var(--imp-space); }
+.error { padding: var(--imp-space); border-left: 3px solid var(--imp-teal); background: var(--imp-control); font-weight: 600; margin-bottom: var(--imp-space); }
 @media (max-width: 600px) { .acciones { flex-direction: column; } .acciones button { width: 100%; } }

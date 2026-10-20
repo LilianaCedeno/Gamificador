@@ -2,21 +2,22 @@
 article.imp-card { flex: 1; min-width: 0; padding: .6rem .75rem; text-align: center; display: flex; flex-direction: column; align-items: stretch; }
 h3 { min-height: 2.1rem; font-size: .85rem; font-weight: 600; line-height: 1.25; }
 /* +40% respecto de 3–4rem; el límite de ancho protege las tarjetas estrechas. */
-.medalla { --medal-color: var(--imp-secondary); position: relative; isolation: isolate; margin: .2rem auto; width: clamp(4.2rem, 6.3vw, 5.6rem); max-width: 100%; aspect-ratio: 1; display: grid; place-items: center; color: var(--medal-color); border: 1px solid var(--medal-color); border-radius: 50%; background: radial-gradient(circle, #4d8dba18, var(--imp-ink) 70%); box-shadow: 0 0 0 3px #061a2438; }
+.medalla { --medal-color: var(--imp-secondary); position: relative; isolation: isolate; margin: .2rem auto; width: clamp(4.2rem, 6.3vw, 5.6rem); max-width: 100%; aspect-ratio: 1; display: grid; place-items: center; color: var(--medal-color); border: 1px solid var(--medal-color); border-radius: 50%; background: radial-gradient(circle, var(--imp-tint), var(--imp-control) 70%); box-shadow: 0 0 0 3px var(--imp-shadow); }
 .medalla::before { content: ''; position: absolute; inset: .4rem; border: 1px dashed currentColor; border-radius: inherit; opacity: .4; z-index: -1; }
 .medalla-placeholder { font-size: 2.8rem; line-height: 1; }
 [data-nivel="BRONCE"] { --medal-color: var(--imp-bronze); }
 [data-nivel="PLATA"] { --medal-color: var(--imp-silver); }
 [data-nivel="ORO"] { --medal-color: var(--imp-gold); }
+[data-nivel="PLATINO"] { --medal-color: var(--imp-platinum); }
 .nivel { font-size: .9rem; font-weight: 650; }
 .estrellas { font-size: .8rem; color: var(--imp-muted); margin-block: .1rem .4rem; }
 label, p, li { font-size: .8rem; }
 label { text-align: left; color: var(--imp-muted); }
-progress { appearance: none; display: block; width: 100%; height: .35rem; border: 0; border-radius: 1rem; overflow: hidden; margin: .3rem 0; background: var(--imp-ink); accent-color: var(--imp-teal); }
-progress::-webkit-progress-bar { background: var(--imp-ink); }
+progress { appearance: none; display: block; width: 100%; height: .35rem; border: 0; border-radius: 1rem; overflow: hidden; margin: .3rem 0; background: var(--imp-track); accent-color: var(--imp-teal); }
+progress::-webkit-progress-bar { background: var(--imp-track); }
 progress::-webkit-progress-value { background: var(--imp-teal); border-radius: 1rem; }
 progress::-moz-progress-bar { background: var(--imp-teal); border-radius: 1rem; }
-.maximo { padding: .3rem; border: 1px solid var(--imp-border); border-radius: .5rem; background: var(--imp-ink); color: var(--imp-text); }
+.maximo { padding: .3rem; border: 1px solid var(--imp-border); border-radius: .5rem; background: var(--imp-control); color: var(--imp-text); }
 details { margin-top: .2rem; text-align: left; color: var(--imp-muted); }
 details summary { padding-block: .35rem; min-height: 2.75rem; }
 details ul { padding-left: 1rem; }

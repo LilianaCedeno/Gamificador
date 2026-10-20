@@ -18,7 +18,7 @@ describe('Historial', () => {
     expect(f.nativeElement.querySelector('.historial').getAttribute('tabindex')).toBe('0');
     expect(f.nativeElement.querySelector('.historial').getAttribute('aria-label')).toContain('desplazamiento vertical');
     expect(f.nativeElement.querySelector('.historial .filtros')).toBeNull();
-    expect(f.componentInstance.visibles()).toHaveLength(28);
+    expect(f.componentInstance.visibles()).toHaveLength(56);
     expect(f.nativeElement.textContent).toContain('Sara Prueba');
     expect(f.nativeElement.textContent).toContain('Cliente de ejemplo');
     expect(f.nativeElement.textContent).toContain('Rechazado');

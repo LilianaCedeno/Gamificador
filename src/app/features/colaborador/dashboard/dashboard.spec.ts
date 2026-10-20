@@ -1,12 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { of, Subject, throwError } from 'rxjs';
+import { Dialog } from '@angular/cdk/dialog';
+import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { Dashboard } from './dashboard';
 import { ColaboradorDataService, type DashboardColaborador } from '../../../core/data-access/colaborador-data.service';
-import { firstValueFrom } from 'rxjs';
+import { CLAVE_TEMA_IMPULSA } from '../../../core/data-access/tema.service';
 
-describe('Dashboard Colaborador', () => {
+describe('Dashboard Colaborador: perfil, modal y temas', () => {
   let datos: DashboardColaborador;
-  beforeEach(async () => { datos = await firstValueFrom(new ColaboradorDataService().cargar()); });
+  beforeEach(async () => {
+    localStorage.removeItem(CLAVE_TEMA_IMPULSA);
+    datos = await firstValueFrom(new ColaboradorDataService().cargar());
+  });
+  afterEach(() => {
+    TestBed.inject(Dialog).closeAll();
+    vi.restoreAllMocks();
+    localStorage.removeItem(CLAVE_TEMA_IMPULSA);
+  });
   function preparar(cargar = vi.fn().mockReturnValue(of(datos))) {
     const reconocer = vi.fn().mockReturnValue(of(datos));
     TestBed.configureTestingModule({ providers: [{ provide: ColaboradorDataService, useValue: { cargar, reconocer } }] });
@@ -14,137 +23,188 @@ describe('Dashboard Colaborador', () => {
     f.detectChanges();
     return { f, cargar, reconocer };
   }
-  it('presenta las secciones en el orden aprobado y métricas coherentes', () => {
+  async function abrir(f: ReturnType<typeof preparar>['f']) {
+    const boton = f.nativeElement.querySelector('#abrir-reconocer') as HTMLButtonElement;
+    boton.focus(); boton.click(); f.detectChanges();
+    await f.whenStable();
+    return document.querySelector('cdk-dialog-container') as HTMLElement;
+  }
+  function completarFormulario() {
+    for (const [selector, valor, evento] of [
+      ['#destinatario', 'col-2', 'change'], ['#categoria', 'mentorias', 'change'],
+      ['#motivo', 'Gracias por compartir tus conocimientos', 'input'],
+    ]) {
+      const control = document.querySelector(selector) as HTMLInputElement;
+      control.value = valor;
+      control.dispatchEvent(new Event(evento, { bubbles: true }));
+    }
+  }
+  function enviarFormulario() {
+    completarFormulario();
+    document.querySelector('cdk-dialog-container form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  }
+  function escape() {
+    document.querySelector('cdk-dialog-container')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true, cancelable: true }));
+  }
+
+  it('coloca el perfil en el flujo de main y mantiene cinco categorías y paneles', () => {
     const { f } = preparar();
     const html = f.nativeElement as HTMLElement;
-    expect(html.textContent).toContain('IMPULSA');
-    expect(html.textContent).toContain('Ana Ejemplo');
+    expect(html.querySelector('.cabecera')!.nextElementSibling).toBe(html.querySelector('main'));
+    expect(html.querySelector('main')!.firstElementChild).toBe(html.querySelector('.perfil'));
+    expect(html.querySelector('.cabecera .perfil')).toBeNull();
+    expect(html.querySelector('.encabezados')).toBeNull();
+    expect(getComputedStyle(html.querySelector('.cabecera')!).position).toBe('sticky');
+    expect(getComputedStyle(html.querySelector('.perfil')!).position).not.toBe('sticky');
     expect(html.textContent).toContain('4 años, 7 meses y 4 días');
-    expect(Array.from(html.querySelectorAll('section')).map(s => s.getAttribute('aria-labelledby'))).toEqual(['titulo-perfil', 'titulo-insignias', 'titulo-historial', 'titulo-avances']);
+    expect(html.querySelector('.perfil')!.textContent).toContain('DEMO-001');
     expect(html.querySelectorAll('app-insignia-card')).toHaveLength(5);
-    expect(html.querySelector('main')!.firstElementChild).toBe(html.querySelector('#insignias'));
-    expect(html.querySelector('.encabezados')!.firstElementChild).toBe(html.querySelector('.cabecera'));
-    expect(html.querySelector('.cabecera')!.nextElementSibling).toBe(html.querySelector('.perfil'));
-    expect(html.querySelector('.encabezados')!.nextElementSibling).toBe(html.querySelector('main'));
+    expect(html.querySelectorAll('img[medalla]')).toHaveLength(4);
+    expect(html.querySelector('img[src="images/insignias/platino.png"]')).not.toBeNull();
     expect(Array.from(html.querySelector('.paneles')!.children).map(n => n.id)).toEqual(['historial', 'avances']);
     expect(html.querySelectorAll('.paneles > .panel.imp-card')).toHaveLength(2);
-    for (const panel of html.querySelectorAll('.paneles > .panel')) {
-      expect(panel.firstElementChild?.tagName).toBe('H2');
-      expect(panel.querySelectorAll(':scope > h2')).toHaveLength(1);
-    }
-    const encabezadoComun = html.querySelector('#titulo-aportes')!;
-    expect(encabezadoComun.textContent).toBe('APORTES QUE DEJAN HUELLA');
-    expect(html.querySelectorAll('#titulo-aportes')).toHaveLength(1);
-    expect(encabezadoComun.nextElementSibling).toBe(html.querySelector('.paneles'));
-    expect(html.querySelector('.paneles')!.getAttribute('aria-labelledby')).toBe('titulo-aportes');
-    expect(html.querySelector('#historial #titulo-aportes')).toBeNull();
-    expect(html.querySelector('#historial')!.firstElementChild).toBe(html.querySelector('#titulo-historial'));
-    expect(html.querySelector('#titulo-historial')!.nextElementSibling?.tagName.toLowerCase()).toBe('app-historial');
-    expect(html.querySelectorAll('#avances .metricas article')).toHaveLength(3);
-    expect(html.querySelector('#historial app-historial .filtros')).toBeTruthy();
-    expect(html.querySelector('#historial .historial')!.getAttribute('tabindex')).toBe('0');
-    expect(html.textContent).not.toContain('Mi espacio de logros');
-    expect(html.textContent).not.toContain('Cada aporte cuenta. Descubre cómo vas avanzando');
-    expect(html.querySelectorAll('#titulo-perfil')).toHaveLength(1);
-    expect(html.querySelector('h1')!.textContent).toBe('Ana Ejemplo');
-    expect(Array.from(html.querySelectorAll('.datos-perfil dt')).map(n => n.textContent)).toEqual(['Antigüedad', 'Fecha de ingreso', 'Identificación interna']);
-    expect(html.querySelector('.perfil')!.textContent).toContain('15/03/2022');
-    expect(html.querySelector('.perfil')!.textContent).toContain('DEMO-001');
-    expect(html.querySelector('.perfil a')!.getAttribute('href')).toBe('mailto:ana@example.invalid');
-    expect(html.querySelectorAll('app-insignia-card img[medalla]')).toHaveLength(3);
-    expect(html.querySelector('#historial')!.compareDocumentPosition(html.querySelector('.demo')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(f.componentInstance.estrellas).toBe(27);
-    expect(html.querySelectorAll('.metricas strong')[2].textContent).toBe('+13');
+    expect(html.querySelector('#titulo-aportes')!.nextElementSibling).toBe(html.querySelector('.paneles'));
+    expect(f.componentInstance.estrellas).toBe(55);
+    expect(html.querySelectorAll('.metricas strong')[2].textContent).toBe('+39');
+    expect(html.querySelector('main app-reconocimiento-form')).toBeNull();
   });
-  it('presenta carga, error y reintento exitoso', () => {
+
+  it('presenta carga, error y reintento', () => {
     const respuesta = new Subject<DashboardColaborador>();
     const cargar = vi.fn().mockReturnValueOnce(respuesta).mockReturnValueOnce(throwError(() => new Error())).mockReturnValue(of(datos));
     const { f } = preparar(cargar);
     expect(f.nativeElement.textContent).toContain('Cargando tu espacio');
     expect(f.nativeElement.querySelector('#abrir-reconocer').disabled).toBe(true);
-    respuesta.next(datos);
-    f.detectChanges();
-    f.componentInstance.cargar('error');
-    f.detectChanges();
-    expect(f.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
-    (f.nativeElement.querySelector('.aviso button') as HTMLButtonElement).click();
-    f.detectChanges();
+    respuesta.next(datos); f.detectChanges();
+    f.componentInstance.cargar('error'); f.detectChanges();
+    expect(f.nativeElement.querySelector('[role="alert"]')).not.toBeNull();
+    f.nativeElement.querySelector('.aviso button').click(); f.detectChanges();
     expect(f.nativeElement.textContent).toContain('Ana Ejemplo');
   });
-  it('muestra una sola acción de reconocimiento en la navegación y abre el formulario existente', () => {
+
+  it('abre una sola instancia modal accesible, bloquea scroll y atrapa el foco', async () => {
+    // jsdom no calcula geometría: simulamos una página larga y controles visibles.
+    vi.spyOn(document.documentElement, 'scrollHeight', 'get').mockReturnValue(2000);
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(100);
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(40);
+    vi.spyOn(window, 'scroll').mockImplementation(() => {});
     const { f } = preparar();
-    const html = f.nativeElement as HTMLElement;
-    const acciones = Array.from(html.querySelectorAll('button')).filter(b => b.textContent?.trim() === 'Reconocer a un compañero');
-    expect(acciones).toHaveLength(1);
-    const boton = acciones[0];
-    expect(boton.closest('.cabecera')).not.toBeNull();
-    expect(html.querySelector('#historial #abrir-reconocer')).toBeNull();
-    expect(boton.classList.contains('imp-primary')).toBe(true);
-    expect(boton.getAttribute('aria-expanded')).toBe('false');
-    boton.click();
-    f.detectChanges();
-    expect(boton.getAttribute('aria-expanded')).toBe('true');
-    expect(html.querySelectorAll('app-reconocimiento-form')).toHaveLength(1);
-    expect(html.querySelector('#reconocer-panel form')).not.toBeNull();
-    expect(html.querySelectorAll('#abrir-reconocer')).toHaveLength(1);
-  });
-  it('abre, envía y cierra el formulario con confirmación accesible', () => {
-    const { f, reconocer } = preparar();
-    f.nativeElement.querySelector('#abrir-reconocer').click();
-    f.detectChanges();
-    expect(f.nativeElement.querySelector('app-reconocimiento-form')).toBeTruthy();
-    expect(f.nativeElement.querySelector('.paneles app-reconocimiento-form')).toBeNull();
-    expect(f.nativeElement.querySelector('.paneles').nextElementSibling.id).toBe('reconocer-panel');
-    f.componentInstance.enviar({ destinatarioId: 'col-2', categoriaId: 'mentorias', motivo: 'Gracias', evidencias: [] });
-    f.detectChanges();
-    expect(reconocer).toHaveBeenCalledTimes(1);
+    expect(f.nativeElement.querySelectorAll('#abrir-reconocer')).toHaveLength(1);
+    const modal = await abrir(f);
+    expect(modal.getAttribute('role')).toBe('dialog');
+    expect(modal.getAttribute('aria-modal')).toBe('true');
+    expect(modal.getAttribute('aria-labelledby')).toBe('titulo-reconocer');
+    expect(modal.querySelectorAll('app-reconocimiento-form')).toHaveLength(1);
+    expect(getComputedStyle(modal.querySelector('.modal-contenido')!).overflowY).toBe('auto');
     expect(f.nativeElement.querySelector('app-reconocimiento-form')).toBeNull();
-    expect(f.nativeElement.querySelector('[role="status"]').textContent).toContain('Quedó pendiente de People');
-  });
-  it('mantiene el formulario ante un error de envío y permite reintentar', () => {
-    const { f, reconocer } = preparar();
-    reconocer.mockReturnValue(throwError(() => new Error()));
+    expect(document.documentElement.classList.contains('cdk-global-scrollblock')).toBe(true);
+    await vi.waitFor(() => expect(document.activeElement?.id).toBe('titulo-reconocer'));
+    const anclas = document.querySelectorAll<HTMLElement>('.impulsa-dialog-pane .cdk-focus-trap-anchor');
+    expect(anclas).toHaveLength(2);
+    anclas[1].focus();
+    expect(document.activeElement).toBe(modal.querySelector('[aria-label="Cerrar reconocimiento"]'));
     f.componentInstance.abrirFormulario();
-    f.componentInstance.enviar({ destinatarioId: 'col-2', categoriaId: 'mentorias', motivo: 'Gracias', evidencias: [] });
-    f.detectChanges();
-    expect(f.componentInstance.enviando()).toBe(false);
-    expect(f.nativeElement.querySelector('app-reconocimiento-form')).toBeTruthy();
-    expect(f.nativeElement.querySelector('[role="alert"]').textContent).toContain('No se pudo enviar');
+    expect(document.querySelectorAll('app-reconocimiento-modal')).toHaveLength(1);
+    escape(); f.detectChanges(); await f.whenStable();
+    expect(document.documentElement.classList.contains('cdk-global-scrollblock')).toBe(false);
   });
 
-  it('muestra el dashboard vacío con cinco categorías en cero', async () => {
+  it.each(['X', 'Cancelar', 'Escape'])('cierra con %s, desbloquea scroll y restaura el foco', async (accion) => {
+    const { f } = preparar();
+    const modal = await abrir(f);
+    if (accion === 'Escape') escape();
+    else if (accion === 'X') (modal.querySelector('[aria-label="Cerrar reconocimiento"]') as HTMLButtonElement).click();
+    else (Array.from(modal.querySelectorAll('button')).find(b => b.textContent?.trim() === 'Cancelar')!).click();
+    f.detectChanges(); await f.whenStable();
+    expect(document.querySelector('app-reconocimiento-modal')).toBeNull();
+    expect(document.documentElement.classList.contains('cdk-global-scrollblock')).toBe(false);
+    await vi.waitFor(() => expect(document.activeElement?.id).toBe('abrir-reconocer'));
+    expect(f.componentInstance.formularioVisible()).toBe(false);
+  });
+
+  it('no cierra con backdrop ni durante envío y conserva el borrador al fallar', async () => {
+    const { f, reconocer } = preparar();
+    const pendiente = new Subject<DashboardColaborador>();
+    reconocer.mockReturnValue(pendiente);
+    const modal = await abrir(f);
+    enviarFormulario(); await f.whenStable();
+    expect(reconocer).toHaveBeenCalledTimes(1);
+    expect((modal.querySelector('[aria-label="Cerrar reconocimiento"]') as HTMLButtonElement).disabled).toBe(true);
+    escape();
+    document.querySelector('.impulsa-backdrop')!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(document.querySelector('app-reconocimiento-modal')).not.toBeNull();
+    pendiente.error(new Error('Fallo simulado'));
+    await f.whenStable();
+    expect(modal.querySelector('[role="alert"]')!.textContent).toContain('Tus datos se conservan');
+    expect((modal.querySelector('#motivo') as HTMLTextAreaElement).value).toContain('Gracias');
+    expect((modal.querySelector('[aria-label="Cerrar reconocimiento"]') as HTMLButtonElement).disabled).toBe(false);
+    reconocer.mockReturnValue(of(datos));
+    enviarFormulario(); await f.whenStable(); f.detectChanges();
+    expect(reconocer).toHaveBeenCalledTimes(2);
+    expect(document.querySelector('app-reconocimiento-modal')).toBeNull();
+    expect(f.nativeElement.querySelector('[role="status"]').textContent).toContain('Quedó pendiente de People');
+  });
+
+  it('conserva las validaciones antes de llamar al servicio', async () => {
+    const { f, reconocer } = preparar();
+    const modal = await abrir(f);
+    modal.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await f.whenStable();
+    expect(reconocer).not.toHaveBeenCalled();
+    expect(modal.querySelector('[role="alert"]')!.textContent).toContain('Selecciona un compañero');
+  });
+
+  it('parte oscuro, alterna tema y guarda una preferencia independiente de autenticación', async () => {
+    const { f } = preparar(); await f.whenStable();
+    const selector = f.nativeElement.querySelector('.selector-tema') as HTMLButtonElement;
+    expect(f.nativeElement.querySelector('.impulsa-shell').getAttribute('data-tema')).toBe('oscuro');
+    expect(selector.getAttribute('aria-label')).toBe('Activar tema claro');
+    selector.click(); f.detectChanges();
+    expect(f.nativeElement.querySelector('.impulsa-shell').getAttribute('data-tema')).toBe('claro');
+    expect(localStorage.getItem(CLAVE_TEMA_IMPULSA)).toBe('claro');
+    const modal = await abrir(f);
+    expect(modal.querySelector('.impulsa-shell')!.getAttribute('data-tema')).toBe('claro');
+    f.componentInstance.preferencia.alternar(); await f.whenStable();
+    expect(modal.querySelector('.impulsa-shell')!.getAttribute('data-tema')).toBe('oscuro');
+    expect(localStorage.getItem(CLAVE_TEMA_IMPULSA)).toBe('oscuro');
+  });
+
+  it('restaura la preferencia local al crear el dashboard', async () => {
+    localStorage.setItem(CLAVE_TEMA_IMPULSA, 'claro');
+    const { f } = preparar(); await f.whenStable();
+    expect(f.componentInstance.preferencia.tema()).toBe('claro');
+    f.componentInstance.cargar('vacio'); f.detectChanges();
+    expect(f.componentInstance.preferencia.tema()).toBe('claro');
+  });
+
+  it('funciona si el almacenamiento local está bloqueado', async () => {
+    const leer = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('Bloqueado'); });
+    const guardar = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('Bloqueado'); });
+    const { f } = preparar(); await f.whenStable();
+    f.nativeElement.querySelector('.selector-tema').click(); f.detectChanges();
+    expect(f.componentInstance.preferencia.tema()).toBe('claro');
+    expect(leer).toHaveBeenCalledWith(CLAVE_TEMA_IMPULSA);
+    expect(guardar).toHaveBeenCalledWith(CLAVE_TEMA_IMPULSA, 'claro');
+  });
+
+  it('admite el estado vacío con todas las categorías en cero', async () => {
     datos = await firstValueFrom(new ColaboradorDataService().cargar('vacio'));
     const { f } = preparar();
-    expect(f.nativeElement.querySelectorAll('.medalla')).toHaveLength(5);
-    expect(f.nativeElement.querySelectorAll('progress')).toHaveLength(5);
     expect(f.componentInstance.estrellas).toBe(0);
+    expect(f.nativeElement.querySelectorAll('progress')).toHaveLength(5);
     expect(f.nativeElement.textContent).toContain('No hay reconocimientos recibidos');
   });
 
-  it('integra formulario, servicio real e historial de enviados sin sumar estrellas', async () => {
-    const f = TestBed.createComponent(Dashboard);
-    f.detectChanges();
+  it('integra el modal con el servicio mock y el historial de enviados', async () => {
+    const f = TestBed.createComponent(Dashboard); f.detectChanges();
     await vi.waitFor(() => expect(f.componentInstance.datos()).not.toBeNull());
-    f.detectChanges();
-    f.nativeElement.querySelector('#abrir-reconocer').click();
-    f.detectChanges();
-    const html = f.nativeElement as HTMLElement;
-    const completar = (selector: string, valor: string, evento: string) => {
-      const control = html.querySelector(selector) as HTMLInputElement;
-      control.value = valor;
-      control.dispatchEvent(new Event(evento, { bubbles: true }));
-    };
-    completar('#destinatario', 'col-2', 'change');
-    completar('#categoria', 'mentorias', 'change');
-    completar('#motivo', 'Gracias por compartir tus conocimientos', 'input');
-    html.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    f.detectChanges(); await abrir(f);
+    enviarFormulario();
     await vi.waitFor(() => expect(f.componentInstance.mensaje()).toContain('Quedó pendiente'));
     f.detectChanges();
-    const botones = Array.from(html.querySelectorAll('app-historial button')) as HTMLButtonElement[];
-    botones.find(b => b.textContent?.includes('Enviados'))!.click();
-    f.detectChanges();
-    expect(html.querySelector('app-historial')!.textContent).toContain('Gracias por compartir tus conocimientos');
-    expect(html.querySelector('app-historial')!.textContent).toContain('Pendiente');
-    expect(f.componentInstance.estrellas).toBe(27);
+    const botones = Array.from(f.nativeElement.querySelectorAll('app-historial button')) as HTMLButtonElement[];
+    botones.find(b => b.textContent?.includes('Enviados'))!.click(); f.detectChanges();
+    expect(f.nativeElement.querySelector('app-historial').textContent).toContain('Gracias por compartir tus conocimientos');
+    expect(f.componentInstance.estrellas).toBe(55);
   });
 });

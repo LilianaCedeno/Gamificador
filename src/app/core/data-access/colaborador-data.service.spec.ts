@@ -8,10 +8,10 @@ describe('ColaboradorDataService', () => {
   it('carga perfil, progreso e historial personal coherentes', async () => {
     const d = await firstValueFrom(servicio.cargar());
     expect(d.antiguedad).toEqual({ anios: 4, meses: 7, dias: 4 });
-    expect(d.progresos.map(p => p.estrellas)).toEqual([12, 8, 5, 2, 0]);
-    expect(d.resumen.estrellasObtenidas).toBe(13);
+    expect(d.progresos.map(p => p.estrellas)).toEqual([25, 15, 10, 5, 0]);
+    expect(d.resumen.estrellasObtenidas).toBe(39);
     expect(d.companeros.some(c => c.id === d.perfil.id)).toBe(false);
-    expect(d.historial).toHaveLength(29);
+    expect(d.historial).toHaveLength(57);
   });
 
   it('admite vacío, error y recuperación', async () => {
@@ -28,8 +28,8 @@ describe('ColaboradorDataService', () => {
     expect(r.estado).toBe('PENDIENTE');
     expect(r.motivo).toBe('Gracias');
     expect(r.fechaDecision).toBeUndefined();
-    expect(d.progresos.reduce((s, p) => s + p.estrellas, 0)).toBe(27);
-    expect((await firstValueFrom(new ColaboradorDataService().cargar())).historial).toHaveLength(29);
+    expect(d.progresos.reduce((s, p) => s + p.estrellas, 0)).toBe(55);
+    expect((await firstValueFrom(new ColaboradorDataService().cargar())).historial).toHaveLength(57);
   });
 
   it('rechaza autorreconocimiento, referencias inválidas, motivo vacío y enlaces inseguros', async () => {

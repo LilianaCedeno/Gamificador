@@ -1,6 +1,6 @@
 /** Modelos de demostración IMPULSA; no constituyen un contrato HTTP. */
 export type RolFuncional = 'COLABORADOR' | 'PEOPLE';
-export type NivelInsignia = 'BRONCE' | 'PLATA' | 'ORO';
+export type NivelInsignia = 'BRONCE' | 'PLATA' | 'ORO' | 'PLATINO';
 export type EstadoReconocimiento = 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
 
 export interface Antiguedad {
@@ -27,6 +27,9 @@ export interface Categoria {
   nombre: string;
   descripcion: string;
   activa: boolean;
+  /** Metadato para futura integración; cada aprobación sigue otorgando una estrella. */
+  estrellasPorDefecto: number;
+  /** Campo legado; los umbrales oficiales actuales son 5/10/15/25. */
   umbralBronce: number;
 }
 
@@ -79,7 +82,7 @@ export interface ProgresoCategoria {
   insigniaActual: Insignia | null;
   proximaInsignia: Insignia | null;
   estrellasFaltantes: number;
-  /** Avance acumulado hacia la próxima meta; Oro devuelve 100. */
+  /** Avance acumulado hacia la próxima meta; Platino devuelve 100. */
   porcentajeAvance: number;
   historialAscensos: readonly AscensoInsignia[];
 }

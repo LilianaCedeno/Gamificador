@@ -22,18 +22,17 @@ describe('IMPULSA: modelos y mocks de Etapa 1', () => {
     expect(() => calcularAntiguedad('incorrecta', '2026-10-19')).toThrow();
   });
 
-  it('permite configurar la base sin fijarla a cinco', () => {
-    expect(calcularUmbrales(categoriasMock[0]).map(i => i.umbral)).toEqual([5, 8, 12]);
-    expect(calcularUmbrales({ ...categoriasMock[0], umbralBronce: 4 }).map(i => i.umbral)).toEqual([4, 6, 9]);
-    for (const base of [0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER]) {
-      expect(() => calcularUmbrales({ ...categoriasMock[0], umbralBronce: base })).toThrow();
-    }
+  it('usa los umbrales oficiales y no pondera estrellasPorDefecto', () => {
+    expect(calcularUmbrales(categoriasMock[0]).map(i => i.umbral)).toEqual([5, 10, 15, 25]);
+    const categoria = { ...categoriasMock[0], umbralBronce: 4, estrellasPorDefecto: 20 };
+    expect(calcularUmbrales(categoria).map(i => i.umbral)).toEqual([5, 10, 15, 25]);
+    expect(calcularProgreso('col-1', categoria, reconocimientosMock).estrellas).toBe(25);
   });
 
   it.each([
     [0, null, 'BRONCE'], [4, null, 'BRONCE'], [5, 'BRONCE', 'PLATA'],
-    [7, 'BRONCE', 'PLATA'], [8, 'PLATA', 'ORO'], [11, 'PLATA', 'ORO'],
-    [12, 'ORO', null], [13, 'ORO', null],
+    [9, 'BRONCE', 'PLATA'], [10, 'PLATA', 'ORO'], [14, 'PLATA', 'ORO'],
+    [15, 'ORO', 'PLATINO'], [24, 'ORO', 'PLATINO'], [25, 'PLATINO', null], [26, 'PLATINO', null],
   ])('con %i estrellas conserva la mayor insignia y próxima meta', (cantidad, actual, siguiente) => {
     const plantilla = reconocimientosMock[0];
     const datos = Array.from({ length: cantidad }, (_, i) => ({ ...plantilla, id: `test-${i}` }));
@@ -48,15 +47,15 @@ describe('IMPULSA: modelos y mocks de Etapa 1', () => {
 
   it('solo cuenta aprobados del destinatario y categoría elegidos', () => {
     const escenario = crearEscenarioMock();
-    expect(escenario.progresos.filter(p => p.colaboradorId === 'col-1').map(p => p.estrellas)).toEqual([12, 8, 5, 2, 0]);
+    expect(escenario.progresos.filter(p => p.colaboradorId === 'col-1').map(p => p.estrellas)).toEqual([25, 15, 10, 5, 0]);
     expect(escenario.progresos.filter(p => p.colaboradorId !== 'col-1').every(p => p.estrellas === 0 && p.insigniaActual === null)).toBe(true);
   });
 
   it('conserva ascensos cronológicos y estrellas sin reiniciar', () => {
     const progreso = calcularProgreso('col-1', categoriasMock[0], [...reconocimientosMock].reverse());
-    expect(progreso.estrellas).toBe(12);
-    expect(progreso.historialAscensos.map(a => a.insignia.nivel)).toEqual(['BRONCE', 'PLATA', 'ORO']);
-    expect(progreso.historialAscensos.map(a => a.reconocimientoId)).toEqual(['certificaciones-05', 'certificaciones-08', 'certificaciones-12']);
+    expect(progreso.estrellas).toBe(25);
+    expect(progreso.historialAscensos.map(a => a.insignia.nivel)).toEqual(['BRONCE', 'PLATA', 'ORO', 'PLATINO']);
+    expect(progreso.historialAscensos.map(a => a.reconocimientoId)).toEqual(['certificaciones-05', 'certificaciones-10', 'certificaciones-15', 'certificaciones-25']);
     expect(progreso.porcentajeAvance).toBe(100);
   });
 
@@ -79,10 +78,10 @@ describe('IMPULSA: modelos y mocks de Etapa 1', () => {
 
   it('resume por mes de decisión e incluye ascensos del mes', () => {
     const octubre = calcularResumenMensual('col-1', '2026-10', categoriasMock, reconocimientosMock);
-    expect(octubre.estrellasObtenidas).toBe(13);
-    expect(octubre.reconocimientosAprobados).toBe(13);
-    expect(octubre.estrellasPorCategoria.map(c => c.estrellas)).toEqual([8, 4, 1, 0, 0]);
-    expect(octubre.insigniasObtenidas).toHaveLength(6);
+    expect(octubre.estrellasObtenidas).toBe(39);
+    expect(octubre.reconocimientosAprobados).toBe(39);
+    expect(octubre.estrellasPorCategoria.map(c => c.estrellas)).toEqual([21, 11, 6, 1, 0]);
+    expect(octubre.insigniasObtenidas).toHaveLength(10);
     expect(calcularResumenMensual('col-1', '2026-08', categoriasMock, reconocimientosMock).estrellasObtenidas).toBe(0);
     expect(() => calcularResumenMensual('col-1', '2026-13', categoriasMock, reconocimientosMock)).toThrow();
   });

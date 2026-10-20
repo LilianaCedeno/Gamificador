@@ -1,0 +1,9 @@
+<div class="impulsa-shell modal-contenido" [attr.data-tema]="datos.tema()" [attr.aria-busy]="enviando()">
+  <div class="modal-cabecera">
+    <button type="button" class="cerrar-modal" aria-label="Cerrar reconocimiento" [disabled]="enviando()" (click)="cerrar()">×</button>
+  </div>
+  <p id="ayuda-modal" class="solo-lectores">Formulario de reconocimiento. Puedes cerrar con Escape cuando no haya un envío en curso.</p>
+  @if (error()) { <p class="modal-error" role="alert">{{ error() }}</p> }
+  @if (enviando()) { <p role="status">Enviando reconocimiento. Espera para cerrar.</p> }
+  <app-reconocimiento-form [companeros]="datos.companeros" [categorias]="datos.categorias" [enviando]="enviando()" (enviar)="enviar($event)" (cancelar)="cerrar()" />
+</div>

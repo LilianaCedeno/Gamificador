@@ -32,17 +32,13 @@ export function calcularAntiguedad(fechaIngreso: string, fechaReferencia: string
   };
 }
 
-/** Regla demostrativa de redondeo, pendiente de validación formal con backend. */
+/** Umbrales oficiales IMPULSA; independientes de los metadatos de categoría. */
 export function calcularUmbrales(categoria: Categoria): readonly Insignia[] {
-  const base = categoria.umbralBronce;
-  if (!Number.isSafeInteger(base) || base < 1) throw new Error('Umbral base inválido');
-  const plata = Math.ceil(base * 1.5);
-  const oro = Math.ceil(plata * 1.5);
-  if (!Number.isSafeInteger(oro)) throw new Error('Umbral fuera de rango');
   return [
-    { categoriaId: categoria.id, nivel: 'BRONCE', umbral: base },
-    { categoriaId: categoria.id, nivel: 'PLATA', umbral: plata },
-    { categoriaId: categoria.id, nivel: 'ORO', umbral: oro },
+    { categoriaId: categoria.id, nivel: 'BRONCE', umbral: 5 },
+    { categoriaId: categoria.id, nivel: 'PLATA', umbral: 10 },
+    { categoriaId: categoria.id, nivel: 'ORO', umbral: 15 },
+    { categoriaId: categoria.id, nivel: 'PLATINO', umbral: 25 },
   ];
 }
 

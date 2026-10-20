@@ -1,0 +1,7 @@
+:host { display: block; min-width: 0; }
+.modal-contenido { max-height: calc(100dvh - 2rem); overflow-y: auto; overscroll-behavior: contain; padding: 1.25rem 1.5rem 1.5rem; background: var(--imp-surface); color: var(--imp-text); font-family: var(--imp-font); line-height: 1.5; border: 1px solid var(--imp-border); border-radius: var(--imp-radius); box-shadow: 0 20px 70px var(--imp-shadow); scrollbar-width: thin; }
+.modal-cabecera { display: flex; justify-content: flex-end; }
+.cerrar-modal { font-size: 1.5rem; padding: 0; width: 44px; line-height: 1; }
+.modal-error { padding: .75rem; border-left: 3px solid var(--imp-teal); background: var(--imp-control); margin-bottom: 1rem; }
+.solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 600px) { .modal-contenido { padding: .75rem 1rem 1rem; } }

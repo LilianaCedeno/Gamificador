@@ -1,11 +1,12 @@
-<div class="impulsa-shell">
+<div class="impulsa-shell" [attr.data-tema]="preferencia.tema()">
   <a class="saltar" href="#contenido-impulsa">Saltar al contenido</a>
-  <div class="encabezados" tabindex="0" role="region" aria-label="Navegación y perfil del colaborador">
   <header class="cabecera">
     <a class="marca" href="#contenido-impulsa" aria-label="IMPULSA, inicio del dashboard">✦ IMPULSA</a>
     <nav aria-label="Navegación del colaborador"><a href="#insignias">Mis insignias</a><a href="#avances">Mis avances</a><a href="#historial">Historial</a></nav>
-    <button id="abrir-reconocer" type="button" [disabled]="cargando() || !datos() || enviando()" class="imp-primary reconocer-nav" [attr.aria-expanded]="formularioVisible()" aria-controls="reconocer-panel" (click)="abrirFormulario()">Reconocer a un compañero</button>
+    <button type="button" class="selector-tema" (click)="preferencia.alternar()" [attr.aria-label]="preferencia.tema() === 'oscuro' ? 'Activar tema claro' : 'Activar tema oscuro'"><span aria-hidden="true">{{ preferencia.tema() === 'oscuro' ? '☀' : '☾' }}</span></button>
+    <button id="abrir-reconocer" type="button" [disabled]="cargando() || !datos()" class="imp-primary reconocer-nav" [attr.aria-expanded]="formularioVisible()" aria-haspopup="dialog" (click)="abrirFormulario()">Reconocer a un compañero</button>
   </header>
+  <main id="contenido-impulsa" tabindex="-1" [attr.aria-busy]="cargando()">
     @if (!cargando()) { @if (datos(); as d) {
       <section class="perfil imp-card" aria-labelledby="titulo-perfil">
         @if (!fotoFallida()) { <img class="foto" [src]="d.perfil.fotografiaUrl" [alt]="'Fotografía de ' + d.perfil.nombre + ' ' + d.perfil.apellido" (error)="fotoFallida.set(true)" /> }
@@ -27,14 +28,12 @@
         </dl>
       </section>
     } }
-  </div>
-  <main id="contenido-impulsa" tabindex="-1" [attr.aria-busy]="cargando()">
     @if (cargando()) { <p class="imp-card" role="status">Cargando tu espacio…</p> }
     @if (error()) { <div class="imp-card aviso" role="alert"><p>{{ error() }}</p>@if (!datos()) { <button type="button" (click)="cargar('normal')">Reintentar</button> }</div> }
     @if (mensaje()) { <p class="imp-card aviso" role="status">{{ mensaje() }}</p> }
     @if (!cargando()) { @if (datos(); as d) {
       <section id="insignias" aria-labelledby="titulo-insignias">
-        <div class="encabezado-seccion"><div><p class="sobrelinea">CADA ESTRELLA ES UN APORTE</p><h2 id="titulo-insignias">Mis insignias y progreso</h2></div><p>Bronce → Plata → Oro</p></div>
+        <div class="encabezado-seccion"><div><p class="sobrelinea">CADA ESTRELLA ES UN APORTE</p><h2 id="titulo-insignias">Mis insignias y progreso</h2></div><p>Bronce → Plata → Oro → Platino</p></div>
         <div class="insignias">@for (categoria of d.categorias; track categoria.id; let i = $index) {
           <app-insignia-card [categoria]="categoria" [progreso]="d.progresos[i]" />
         } @empty { <p class="imp-card">Todavía no hay categorías disponibles.</p> }</div>
@@ -54,14 +53,11 @@
         </div>
       </section>
       </div>
-        @if (formularioVisible()) {
-          <div id="reconocer-panel" class="imp-card formulario"><app-reconocimiento-form [companeros]="d.companeros" [categorias]="d.categorias" [enviando]="enviando()" (enviar)="enviar($event)" (cancelar)="cerrarFormulario()" /></div>
-        }
     } }
     <aside class="demo" aria-label="Datos de demostración">
       <p><strong>Demostración con datos ficticios.</strong> Referencia: 19/10/2026. Los cambios se pierden al recargar.</p>
       <label for="escenario">Escenario de prueba</label>
-      <select id="escenario" [value]="escenario()" [disabled]="cargando() || enviando()" (change)="cargar($any($event.target).value)">
+      <select id="escenario" [value]="escenario()" [disabled]="cargando() || formularioVisible()" (change)="cargar($any($event.target).value)">
         <option value="normal">Con reconocimientos</option><option value="vacio">Sin reconocimientos</option><option value="error">Error de carga</option>
       </select>
     </aside>

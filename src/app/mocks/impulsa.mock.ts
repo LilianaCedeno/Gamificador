@@ -8,11 +8,11 @@ export const colaboradoresMock: readonly Colaborador[] = [
 ];
 
 export const categoriasMock: readonly Categoria[] = [
-  { id: 'certificaciones', nombre: 'Certificaciones', descripcion: 'Certificaciones profesionales', activa: true, umbralBronce: 5 },
-  { id: 'clientes', nombre: 'Felicitaciones de clientes', descripcion: 'Reconocimientos externos registrados por People', activa: true, umbralBronce: 5 },
-  { id: 'innovacion', nombre: 'Innovación', descripcion: 'Ideas y mejoras', activa: true, umbralBronce: 5 },
-  { id: 'mentorias', nombre: 'Mentorías', descripcion: 'Acompañamiento a compañeros', activa: true, umbralBronce: 5 },
-  { id: 'capacitaciones', nombre: 'Capacitaciones', descripcion: 'Aprendizaje continuo', activa: true, umbralBronce: 5 },
+  { id: 'certificaciones', nombre: 'Certificaciones', descripcion: 'Certificaciones profesionales', activa: true, umbralBronce: 5, estrellasPorDefecto: 1 },
+  { id: 'clientes', nombre: 'Felicitaciones de clientes', descripcion: 'Reconocimientos externos registrados por People', activa: true, umbralBronce: 5, estrellasPorDefecto: 1 },
+  { id: 'innovacion', nombre: 'Innovación', descripcion: 'Ideas y mejoras', activa: true, umbralBronce: 5, estrellasPorDefecto: 1 },
+  { id: 'mentorias', nombre: 'Mentorías', descripcion: 'Acompañamiento a compañeros', activa: true, umbralBronce: 5, estrellasPorDefecto: 1 },
+  { id: 'capacitaciones', nombre: 'Capacitaciones', descripcion: 'Aprendizaje continuo', activa: true, umbralBronce: 5, estrellasPorDefecto: 1 },
 ];
 
 /** Referencias inertes: no contienen archivos ni realizan subidas o solicitudes. */
@@ -23,10 +23,10 @@ export const evidenciasMock: readonly Evidencia[] = [
 ];
 
 const lotes = [
-  { categoriaId: 'certificaciones', cantidad: 12 },
-  { categoriaId: 'clientes', cantidad: 8 },
-  { categoriaId: 'innovacion', cantidad: 5 },
-  { categoriaId: 'mentorias', cantidad: 2 },
+  { categoriaId: 'certificaciones', cantidad: 25 },
+  { categoriaId: 'clientes', cantidad: 15 },
+  { categoriaId: 'innovacion', cantidad: 10 },
+  { categoriaId: 'mentorias', cantidad: 5 },
 ];
 
 export const reconocimientosMock: readonly Reconocimiento[] = [
@@ -41,7 +41,7 @@ export const reconocimientosMock: readonly Reconocimiento[] = [
         ? { origen: 'EXTERNO' as const, emisorExterno: { nombre: 'Cliente de ejemplo', correo: 'cliente@example.invalid' }, registradoPorId: 'people-1' }
         : { origen: 'INTERNO' as const, emisorId: 'col-2' }),
       estado: 'APROBADO', validadoPorId: 'people-1',
-      fechaDecision: `2026-${i < 4 ? '09' : '10'}-${dia}T12:00:00.000Z`,
+      fechaDecision: `2026-${i < 4 ? '09' : '10'}-${String(Math.min(i + 1, 19)).padStart(2, '0')}T12:00:00.000Z`,
     };
   })),
   { id: 'pendiente-1', origen: 'INTERNO', emisorId: 'col-1', destinatarioId: 'col-2', categoriaId: 'mentorias', motivo: 'Acompañamiento ficticio pendiente de revisión', fecha: '2026-10-15T09:00:00.000Z', evidencias: [evidenciasMock[2]], estado: 'PENDIENTE' },

@@ -1,0 +1,46 @@
+<section aria-labelledby="people-consulta-titulo">
+  <h2 id="people-consulta-titulo" tabindex="-1">{{ modo() === 'resumen' ? 'Resumen general' : 'Historial e informes' }}</h2>
+  <p class="alcance">Todos los colaboradores</p>
+  <div class="filtros" role="group" aria-label="Filtros de reconocimientos">
+    <label>Mes<input type="month" [value]="mes()" (change)="actualizar('mes', $any($event.target).value)" /></label>
+    @if (modo() === 'informes') {
+      <label>Desde (UTC)<input type="date" [value]="filtros().desde" (change)="actualizar('desde', $any($event.target).value)" /></label>
+      <label>Hasta (UTC)<input type="date" [value]="filtros().hasta" (change)="actualizar('hasta', $any($event.target).value)" /></label>
+      <label>Colaborador destinatario<select [value]="filtros().colaboradorId" (change)="actualizar('colaboradorId', $any($event.target).value)"><option value="">Todos</option>@for (p of datos().colaboradores; track p.id) { <option [value]="p.id">{{ p.nombre }} {{ p.apellido }}</option> }</select></label>
+      <label>Categoría<select [value]="filtros().categoriaId" (change)="actualizar('categoriaId', $any($event.target).value)"><option value="">Todas</option>@for (c of datos().categorias; track c.id) { <option [value]="c.id">{{ c.nombre }}</option> }</select></label>
+    }
+    <label>Estado<select [value]="filtros().estado" (change)="actualizar('estado', $any($event.target).value)"><option value="">Todos</option><option value="PENDIENTE">Pendiente</option><option value="APROBADO">Aprobado</option><option value="RECHAZADO">Rechazado</option></select></label>
+    <button type="button" (click)="limpiar()">{{ modo() === 'informes' ? 'Limpiar filtros y ver todos los meses' : 'Restablecer filtros' }}</button>
+  </div>
+  @if (error()) { <p role="alert">{{ error() }}</p> }
+  @if (modo() === 'resumen') {
+    @if (indicadores(); as i) {
+      <div class="metricas" aria-label="Indicadores generales">
+        <article><h3>Pendientes</h3><strong data-indicador="pendientes">{{ i.pendientes }}</strong><small>Cualquier fecha</small></article>
+        <article><h3>Aprobados</h3><strong data-indicador="aprobados">{{ i.aprobadosMes }}</strong><small>Decisiones de {{ mes() }} UTC</small></article>
+        <article><h3>Rechazados</h3><strong data-indicador="rechazados">{{ i.rechazadosMes }}</strong><small>Decisiones de {{ mes() }} UTC</small></article>
+      </div>
+      <p class="alcance">Pendientes de cualquier fecha y decisiones del mes seleccionado. El estado filtra solo el listado.</p>
+      @if (!i.aprobadosMes && !i.rechazadosMes) { <p class="alcance">No hay decisiones en el mes seleccionado.</p> }
+      @if (i.decisionesSinFechaValida) { <p class="alcance">{{ i.decisionesSinFechaValida }} decisiones no tienen fecha de decisión válida; se usa su fecha de registro como referencia. {{ i.decisionesSinFechaEnMes }} corresponden al mes mostrado.</p> }
+    }
+  } @else {
+    <p class="alcance">Filtros por fecha de decisión o, si no existe, por fecha de registro (UTC).</p>
+    <section aria-labelledby="estadisticas-titulo"><h3 id="estadisticas-titulo">Estadísticas de reconocimientos y estrellas</h3>
+      <div class="metricas"><article>Total<strong>{{ estadisticas().total }}</strong></article><article>Pendientes<strong>{{ estadisticas().pendientes }}</strong></article><article>Aprobados<strong>{{ estadisticas().aprobados }}</strong></article><article>Rechazados<strong>{{ estadisticas().rechazados }}</strong></article><article>Estrellas<strong>{{ estadisticas().estrellas }}</strong></article></div>
+      <p class="alcance">Estrellas de los reconocimientos aprobados incluidos en la consulta.</p>
+    </section>
+    <div class="informes">
+      <section><h3>Informe por colaborador</h3><ul>@for (p of porColaborador(); track p.id) { <li>{{ p.nombre }} · {{ p.total }} reconocimientos · {{ p.estrellas }} estrellas</li> } @empty { <li>Sin datos para estos filtros.</li> }</ul></section>
+      <section><h3>Informe por categoría</h3><ul>@for (c of porCategoria(); track c.id) { <li>{{ c.nombre }} · {{ c.total }} reconocimientos · {{ c.estrellas }} estrellas</li> } @empty { <li>Sin datos para estos filtros.</li> }</ul></section>
+      <section><h3>Informe mensual</h3><ul>@for (m of porMes(); track m.mes) { <li>{{ m.mes }} · {{ m.total }} reconocimientos · {{ m.aprobados }} aprobados · {{ m.pendientes }} pendientes · {{ m.rechazados }} rechazados · {{ m.estrellas }} estrellas</li> } @empty { <li>Sin datos para estos filtros.</li> }</ul></section>
+    </div>
+    <p class="alcance">Exportación a PDF y Excel · Próximamente.</p>
+  }
+  <h3>{{ modo() === 'resumen' ? 'Reconocimientos' : 'Trazabilidad de reconocimientos' }}</h3>
+  <p role="status" class="alcance">{{ visibles().length }} resultados</p>
+  <ul class="registros">@for (r of visibles(); track r.id) {
+    <li><div><h4>{{ nombre(r.destinatarioId) }} · {{ categoria(r.categoriaId) }}</h4><p>{{ r.motivo }}</p><small>{{ r.estado | titlecase }} · Origen {{ r.origen | titlecase }} · Registro {{ r.fecha | date:'dd/MM/yyyy HH:mm':'UTC' }} UTC</small></div><button type="button" (click)="detalle.set(r)">{{ r.estado === 'PENDIENTE' ? 'Revisar pendiente' : 'Ver detalle' }}</button></li>
+  } @empty { <li>No hay reconocimientos para los filtros seleccionados.</li> }</ul>
+</section>
+@if (detalle(); as r) { <app-people-reconocimiento-detalle [reconocimiento]="r" [personas]="datos().colaboradores" [categorias]="datos().categorias" (cerrar)="detalle.set(null)" /> }

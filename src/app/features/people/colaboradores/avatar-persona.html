@@ -1,0 +1,5 @@
+@if (mostrarFoto()) {
+  <img [src]="persona().fotografiaUrl" [alt]="'Fotografía de ' + persona().nombre + ' ' + persona().apellido" (error)="fotoFallida.set(claveFoto())" />
+} @else {
+  <span role="img" [attr.aria-label]="'Avatar de ' + persona().nombre + ' ' + persona().apellido">{{ iniciales() }}</span>
+}

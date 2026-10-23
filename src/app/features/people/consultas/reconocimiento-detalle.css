@@ -1,0 +1,12 @@
+dialog { width: min(42rem, 94vw); max-height: 88dvh; overflow-y: auto; margin: auto; padding: 1.25rem; border: 1px solid var(--imp-secondary); border-radius: var(--imp-radius); background: var(--imp-surface); color: var(--imp-text); font-family: var(--imp-font); overflow-wrap: anywhere; }
+dialog::backdrop { background: var(--imp-overlay); }
+header { display: flex; gap: 1rem; align-items: start; justify-content: space-between; }
+h2 { font-size: 1.1rem; } h3 { font-size: .9rem; margin-block: .8rem .4rem; }
+p, dd, li, label { font-size: .85rem; }
+dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-block: 1rem; }
+dt, #detalle-alcance { color: var(--imp-muted); font-size: .75rem; }
+ul { padding-left: 1rem; }
+textarea { display: block; width: 100%; margin-top: .4rem; background: var(--imp-control); color: var(--imp-text); border: 1px solid var(--imp-border); }
+.acciones { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+button:disabled { cursor: not-allowed; }
+@media (max-width: 500px) { dl { grid-template-columns: minmax(0, 1fr); } }

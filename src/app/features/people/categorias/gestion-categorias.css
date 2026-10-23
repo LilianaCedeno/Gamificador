@@ -1,0 +1,43 @@
+:host { display: flex; flex-direction: column; min-width: 0; min-height: 0; height: 100%; }
+.gestion-encabezado { display: flex; flex-shrink: 0; align-items: start; justify-content: space-between; gap: 1rem; margin-bottom: .6rem; }
+h2 { font-size: 1.1rem; } h3 { font-size: 1rem; margin-bottom: .5rem; } h4 { font-size: .85rem; }
+.gestion-encabezado p, .ayuda, small, label span { color: var(--imp-muted); font-size: .75rem; }
+.regla { flex-shrink: 0; padding: .65rem .75rem; border-left: 3px solid var(--imp-teal); background: var(--imp-tint); font-size: .8rem; margin-bottom: .75rem; }
+.gestion-columnas { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-rows: minmax(0, 1fr); gap: 1rem; align-items: stretch; }
+.gestion-columnas > .imp-card { min-width: 0; min-height: 0; padding: 1rem; box-shadow: none; overflow-wrap: anywhere; }
+.formulario-panel { overflow-y: auto; }
+.disponibles { display: flex; flex-direction: column; }
+.cabecera-disponibles { flex-shrink: 0; background: var(--imp-surface); }
+.busqueda-categorias { display: flex; flex-wrap: wrap; gap: .4rem; }
+.busqueda-categorias input { flex: 1; min-width: min(100%, 10rem); }
+.cabecera-disponibles #resultados-categorias { margin-block: .5rem; }
+.formulario-panel, .lista-categorias { scrollbar-width: thin; scrollbar-color: var(--imp-secondary) var(--imp-control); overscroll-behavior-y: contain; scroll-padding-block: .5rem; }
+label { display: block; font-size: .8rem; font-weight: 600; margin-block: .7rem .25rem; }
+input, select, textarea { display: block; width: 100%; min-width: 0; padding: .55rem; background: var(--imp-control); color: var(--imp-text); font: inherit; font-size: .85rem; border: 1px solid var(--imp-secondary); border-radius: .5rem; }
+textarea { resize: vertical; }
+[aria-invalid="true"] { border-width: 2px; }
+.campos-cortos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.error, .confirmacion { font-size: .8rem; border-left: 3px solid var(--imp-teal); padding-left: .5rem; margin-block: .5rem; }
+.confirmacion:empty, .error-campo:empty { display: none; }
+.error-campo { color: var(--imp-text); font-size: .75rem; margin-top: .25rem; }
+.acciones { display: flex; justify-content: center; align-items: stretch; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+.acciones > button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; line-height: 1.25; }
+button { font-size: .8rem; padding: .5rem .65rem; }
+.lista-categorias { flex: 1; min-height: 0; overflow-y: auto; list-style: none; display: grid; grid-auto-rows: max-content; align-content: start; gap: .6rem; margin-top: .25rem; padding: .25rem; }
+.lista-categorias > li { display: flex; align-items: start; gap: .75rem; justify-content: space-between; padding: .75rem; background: var(--imp-tint); border: 1px solid var(--imp-border); border-radius: .65rem; }
+.lista-categorias > li.en-edicion { border-color: var(--imp-teal); }
+.fila-categoria { display: flex; align-items: start; gap: .6rem; min-width: 0; }
+.fila-categoria p { font-size: .8rem; margin-block: .25rem; white-space: pre-wrap; }
+.fila-categoria small { display: block; }
+.icono { font-size: 1.5rem; line-height: 1.3; color: var(--imp-accent-text); flex-shrink: 0; }
+.lista-categorias button { flex-shrink: 0; }
+@media (max-width: 1050px), (max-height: 600px) {
+  :host { height: auto; min-height: auto; }
+  .gestion-columnas { flex: none; min-height: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; align-items: start; }
+  .formulario-panel { overflow-y: visible; }
+  .disponibles { display: block; }
+  .lista-categorias { flex: none; min-height: auto; overflow-y: visible; }
+  .cabecera-disponibles { position: sticky; top: 0; z-index: 2; padding-bottom: .25rem; }
+}
+@media (max-width: 800px), (max-height: 600px) { .cabecera-disponibles { top: var(--people-nav-height, 4.5rem); } }
+@media (max-width: 450px) { .gestion-encabezado, .lista-categorias > li { flex-direction: column; } .campos-cortos { grid-template-columns: minmax(0, 1fr); } }

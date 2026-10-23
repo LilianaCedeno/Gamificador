@@ -1,0 +1,157 @@
+<div class="impulsa-shell people-shell" [attr.data-tema]="preferencia.tema()">
+  <a class="saltar" href="#people-contenido">Saltar al contenido</a>
+  <div class="people-sticky" role="region" aria-label="Navegación People y contexto de revisión" tabindex="0">
+    <header class="people-nav">
+      <a class="marca" href="#people-contenido" aria-label="IMPULSA, Panel General People">✦ IMPULSA</a>
+      <div class="sesion-people">
+        <button type="button" class="selector-tema" (click)="preferencia.alternar()" [attr.aria-label]="preferencia.tema() === 'oscuro' ? 'Activar tema claro' : 'Activar tema oscuro'">
+          <span aria-hidden="true">{{ preferencia.tema() === 'oscuro' ? '☀' : '☾' }}</span>
+        </button>
+        @if (identidad(); as usuario) {
+          <div class="identidad-people" aria-label="Identidad del usuario People">
+            <app-people-avatar [persona]="usuario.persona" />
+            <div><strong>{{ usuario.persona.nombre }} {{ usuario.persona.apellido }}</strong><span>People</span>
+              <small class="entorno-demo" title="Entorno de demostración: datos simulados, cambios temporales y sin autenticación real.">Demostración</small>
+            </div>
+          </div>
+        } @else {
+          <div class="identidad-no-disponible">
+            <small class="entorno-demo" title="Entorno de demostración: datos simulados y cambios temporales.">Demostración</small>
+            @if (identidadCargando()) { <p role="status">Cargando identidad…</p> }
+            @else { <p role="alert">{{ identidadError() }}</p><button type="button" (click)="cargarIdentidad()">Reintentar identidad</button> }
+          </div>
+        }
+      </div>
+    </header>
+  </div>
+
+  <main id="people-contenido" tabindex="-1" [attr.aria-busy]="estado() === 'cargando'">
+    <div class="intro">
+      <h1>Mantenedor People</h1>
+    </div>
+    @if (estado() === 'cargando') { <p class="imp-card estado" role="status">Cargando Panel General People…</p> }
+    @if (error()) {
+      <div class="imp-card estado error" role="alert"><p>{{ error() }}</p>
+        @if (estado() === 'error') { <button type="button" (click)="cargar()">Reintentar carga</button> }
+      </div>
+    }
+    @if (datos(); as d) {
+
+      <div class="people-workspace">
+        <aside class="barra-lateral" aria-label="Colaboradores y categorías">
+          <section class="imp-card colaboradores-recientes">
+            <h2>Colaboradores recientes</h2>
+            <app-people-colaboradores [colaboradores]="d.colaboradores" [recientesIds]="recientes.recientes()" [consulta]="consulta()" [seleccionadoId]="seleccionadoId()" (consultaCambio)="consulta.set($event)" (seleccionar)="seleccionar($event)" />
+          </section>
+          <nav class="navegacion-lateral" aria-label="Consultas People">
+            <button id="people-nav-resumen" type="button" (click)="abrirGeneral('resumen')" [attr.aria-pressed]="vistaGeneral() === 'resumen'" aria-controls="people-contenido-opcion">Resumen general</button>
+            <button id="people-nav-categorias" type="button" (click)="abrirCategorias('listado')" [attr.aria-pressed]="!!vistaCategorias()" aria-controls="people-contenido-opcion">Gestión de categorías</button>
+            <button id="people-nav-informes" type="button" (click)="abrirGeneral('informes')" [attr.aria-pressed]="vistaGeneral() === 'informes'" aria-controls="people-contenido-opcion">Historial e informes</button>
+          </nav>
+        </aside>
+        <section class="revision-principal" aria-label="Revisión del colaborador">
+          @if (!vistaGeneral() && !vistaCategorias()) {
+          @if (revisado(); as persona) {
+            <div class="banner-sticky">
+              <app-people-revision [persona]="persona" [estrellas]="estrellas()" [logros]="logros()" [reconocimientos]="resumen().total" (limpiar)="limpiarSeleccion()" />
+            </div>
+          } @else {
+            <div class="imp-card seleccion-vacia" role="status"><h2>Selecciona un colaborador</h2><p>Busca por nombre o identificación interna para comenzar la revisión.</p></div>
+          }
+          <nav class="pestanas" role="tablist" aria-label="Secciones del colaborador">
+            @for (item of secciones; track item.id) {
+              <button type="button" role="tab" [id]="'people-tab-' + item.id" [attr.aria-selected]="!vistaCategorias() && seccion() === item.id" [attr.aria-controls]="'people-panel-' + item.id" [attr.tabindex]="seccion() === item.id ? 0 : -1" (click)="activarSeccion(item.id)" (keydown)="moverPestana($event, item.id)">{{ item.nombre }}</button>
+            }
+          </nav>
+          }
+          <div id="people-contenido-opcion" class="contenido-opcion" [class.historial-activo]="!vistaGeneral() && !vistaCategorias() && seccion() === 'historial' && !!revisado()" tabindex="0" aria-label="Contenido de revisión People">
+            @if (vistaGeneral(); as vista) { <app-people-consulta [datos]="d" [modo]="vista" [mesInicial]="mes()" /> }
+            @if (vistaCategorias()) {
+              <app-people-gestion-categorias [solicitud]="solicitudCategorias()" (volver)="activarSeccion('perfil', true)" />
+            }
+            @for (item of secciones; track item.id) {
+              <div role="tabpanel" [id]="'people-panel-' + item.id" [attr.aria-labelledby]="'people-tab-' + item.id" [hidden]="!!vistaGeneral() || !!vistaCategorias() || seccion() !== item.id" [class.vista-historial]="item.id === 'historial'">
+              @if (!vistaGeneral() && !vistaCategorias() && seccion() === item.id) {
+                @for (persona of personasEnRevision(); track persona.id) {
+                  @switch (item.id) {
+                    @case ('perfil') {
+            <div class="paneles-revision">
+              <section class="imp-card panel ficha-revision" aria-labelledby="titulo-informacion">
+                <h2 id="titulo-informacion">Información general</h2>
+                <dl class="datos-personales">
+                  <div><dt>Nombre completo</dt><dd>{{ persona.nombre }} {{ persona.apellido }}</dd></div>
+                  <div><dt>Cargo</dt><dd>{{ persona.cargo }}</dd></div>
+                  <div><dt>Identificación interna</dt><dd>{{ persona.identificacionInterna }}</dd></div>
+                  <div><dt>Correo corporativo</dt><dd>{{ persona.correoCorporativo }}</dd></div>
+                  <div><dt>Fecha de ingreso</dt><dd>{{ persona.fechaIngreso | date:'dd/MM/yyyy':'UTC' }}</dd></div>
+                  @if (antiguedad(); as tiempo) { <div><dt>Antigüedad</dt><dd>{{ tiempo.anios }} años, {{ tiempo.meses }} meses y {{ tiempo.dias }} días</dd></div> }
+                </dl>
+              </section>
+              <section class="imp-card panel" aria-labelledby="titulo-resumen">
+                <h2 id="titulo-resumen">Resumen de reconocimientos</h2>
+                <div class="resumen-persona">
+                  <article><h3>Estrellas acumuladas</h3><p class="contador"><svg class="estrella-dorada" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" /></svg><strong data-personal="estrellas">{{ estrellas() }}</strong></p></article>
+                  <article><h3>Insignias obtenidas</h3><p class="contador"><strong data-personal="insignias">{{ ultimasInsignias().length }}</strong></p><small>Incluye ascensos históricos</small></article>
+                  <article><h3>Recibidos esta semana</h3><p class="contador"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2c1 6-4 6-3 11-3-1-3-4-3-4-6 8-2 13 5 13 8 0 11-9 1-20Z" /></svg><strong data-personal="semana">{{ actividad().semana }}</strong></p><small>{{ actividad().inicioSemana | date:'dd/MM':'UTC' }}–{{ actividad().finSemana | date:'dd/MM':'UTC' }} · UTC</small></article>
+                  <article><h3>Reconocimientos del mes</h3><p class="contador"><strong data-personal="mes">{{ actividad().actual }}</strong></p>
+                    <small>{{ actividad().mesActual }}: {{ actividad().actual }} · {{ actividad().mesAnterior }}: {{ actividad().anterior }}</small>
+                    <p class="variacion">@if (actividad().variacion !== null) { {{ actividad().variacion! > 0 ? '+' : '' }}{{ actividad().variacion | number:'1.0-1' }}% frente al mes anterior } @else { Sin base de comparación }</p>
+                  </article>
+                </div>
+                <details class="nota-muestra"><summary>Criterios de los indicadores</summary><p>Recibidos por fecha de registro, todos los estados. Semana de lunes a domingo UTC. Mes actual hasta {{ fechaReferencia() | date:'dd/MM/yyyy':'UTC' }} frente al mes anterior completo. Solo aprobados suman estrellas.</p></details>
+                @if (actividad().sinFecha) { <p class="nota-muestra">{{ actividad().sinFecha }} registros sin fecha válida se excluyen de los períodos.</p> }
+              </section>
+              <section class="imp-card panel" aria-labelledby="titulo-progreso">
+                <h2 id="titulo-progreso">Categorías y estrellas</h2>
+                <p class="nota-muestra">Bronce: 5 · Plata: 10 · Oro: 15 · Platino: 25 estrellas.</p>
+                <app-people-insignias [items]="progresos()" [resumen]="true" />
+              </section>
+              <section class="imp-card panel" aria-labelledby="titulo-ultimas">
+                <h2 id="titulo-ultimas">Últimas insignias</h2>
+                <p class="nota-muestra">Ascensos obtenidos, del más reciente al más antiguo.</p>
+                <ul class="ascensos" aria-labelledby="titulo-ultimas">
+                  @for (ascenso of ultimasInsignias().slice(0, 4); track ascenso.categoria.id + ascenso.insignia.nivel) {
+                    <li>
+                      <img [src]="'images/insignias/' + ascenso.insignia.nivel.toLowerCase() + '.png'" alt="" width="48" height="48" />
+                      <div><h3>{{ ascenso.categoria.nombre }}</h3><p>{{ ascenso.insignia.nivel | titlecase }} · {{ ascenso.insignia.umbral }} estrellas</p><time [attr.datetime]="ascenso.fecha">{{ ascenso.fecha | date:'dd/MM/yyyy HH:mm':'UTC' }} UTC</time></div>
+                    </li>
+                  } @empty { <li class="sin-insignias">Todavía no hay insignias obtenidas.</li> }
+                </ul>
+                <button type="button" class="enlace-panel" (click)="activarSeccion('insignias', true)">Ver insignias y ascensos</button>
+              </section>
+              <section class="imp-card panel ranking" aria-labelledby="titulo-ranking">
+                <h2 id="titulo-ranking">Posición en ranking</h2>
+                <p class="proximamente">Próximamente</p>
+                <p class="nota-muestra">La definición funcional del ranking está pendiente de aprobación.</p>
+              </section>
+              <section class="imp-card panel actividad-reciente" aria-labelledby="titulo-actividad">
+                <h2 id="titulo-actividad">Actividad reciente</h2>
+                <ul>@for (r of actividadReciente(); track r.id) {
+                  <li><div class="fila-actividad"><h3>{{ categoriaNombre(r.categoriaId) }}</h3><span class="estado">{{ r.estado | titlecase }}</span></div><p>{{ r.motivo }}</p><small><time [attr.datetime]="r.fecha">{{ r.fecha | date:'dd/MM/yyyy HH:mm':'UTC' }}</time> UTC · Origen {{ r.origen | titlecase }}</small></li>
+                } @empty { <li>No hay reconocimientos recibidos.</li> }</ul>
+                <button type="button" class="enlace-panel" (click)="activarSeccion('historial', true)">Ver historial y evidencias</button>
+              </section>
+            </div>
+                    }
+                    @case ('insignias') {
+                      <section class="vista-insignias" aria-labelledby="titulo-insignias"><h2 id="titulo-insignias">Insignias y progreso</h2><p class="nota-muestra">Bronce 5 · Plata 10 · Oro 15 · Platino 25. Una estrella por reconocimiento aprobado.</p><app-people-insignias [items]="progresos()" /></section>
+                    }
+                    @case ('ranking') {
+                      <section class="imp-card ranking"><h2>Ranking</h2><p class="proximamente">Próximamente</p><p>La definición funcional del ranking está pendiente de aprobación.</p></section>
+                    }
+                    @case ('historial') {
+                      <section class="imp-card panel-historial" aria-labelledby="titulo-historial"><h2 id="titulo-historial">Historial de reconocimientos</h2><p class="nota-muestra">Aprobación, rechazo y edición: próximas funcionalidades. Fechas UTC.</p><app-historial [reconocimientos]="historialOrdenado()" [personas]="d.colaboradores" [categorias]="d.categorias" [colaboradorId]="persona.id" /></section>
+                    }
+                  }
+                } @empty { <p class="imp-card" role="status">Selecciona una persona para consultar {{ item.nombre }}.</p> }
+              }
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    }
+
+    <footer>IMPULSA · People</footer>
+  </main>
+</div>

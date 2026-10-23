@@ -1,0 +1,11 @@
+<section class="banda-revision" aria-labelledby="people-titulo-revision" aria-live="polite">
+  <app-people-avatar [persona]="persona()" />
+  <div class="persona">
+    <p class="etiqueta" id="people-titulo-revision">Colaborador en revisión</p>
+    <h2>{{ persona().nombre }} {{ persona().apellido }}</h2>
+    <p>{{ persona().cargo }} · {{ persona().identificacionInterna }}</p>
+    <p>{{ persona().correoCorporativo }}</p>
+    <p class="resumen">★ {{ estrellas() }} estrellas · {{ reconocimientos() }} reconocimientos recibidos · {{ logros() }} categorías con insignia</p>
+  </div>
+  <button type="button" (click)="limpiar.emit()">Limpiar selección</button>
+</section>

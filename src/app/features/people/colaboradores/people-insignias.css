@@ -1,0 +1,15 @@
+:host { display: block; min-width: 0; }
+.insignias { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .65rem; }
+article { display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start; align-items: center; gap: .65rem; border: 1px solid var(--imp-border); border-radius: .65rem; padding: .75rem; background: var(--imp-surface); overflow-wrap: anywhere; }
+.medalla { width: var(--people-medal-size, 3rem); aspect-ratio: 1; display: grid; place-items: center; }
+.medalla img { width: 100%; height: 100%; object-fit: contain; }
+.medalla span { color: var(--imp-accent-text); font-size: 2rem; }
+h3 { font-size: .85rem; line-height: 1.3; }
+p, li { font-size: .75rem; margin-top: .2rem; }
+.meta, details { color: var(--imp-muted); }
+progress { display: block; width: 100%; height: .3rem; margin-block: .35rem; accent-color: var(--imp-teal); }
+details { grid-column: 1 / -1; border-top: 1px solid var(--imp-border); font-size: .75rem; }
+details ul { padding-left: 1rem; }
+.resumen { grid-template-columns: minmax(0, 1fr); gap: .35rem; --people-medal-size: var(--people-summary-medal-size, 2rem); }
+.resumen article { padding: .4rem .5rem; border: 0; background: var(--imp-tint); }
+.resumen h3 { font-size: .75rem; }

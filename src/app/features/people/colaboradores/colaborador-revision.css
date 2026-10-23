@@ -1,0 +1,16 @@
+.banda-revision { display: flex; align-items: center; gap: .8rem; max-width: 1320px; margin: auto; padding: .7rem 1rem; background: var(--imp-surface); border-top: 2px solid var(--imp-teal); }
+.persona { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.etiqueta { color: var(--imp-muted); font-size: .7rem; letter-spacing: .08em; }
+h2 { font-size: 1rem; font-weight: 650; }
+.persona > p:last-child { font-size: .8rem; color: var(--imp-muted); }
+@media (max-width: 600px) {
+  .banda-revision { gap: .5rem; padding: .5rem .75rem; flex-wrap: wrap; }
+  app-people-avatar { --people-avatar-size: 2.25rem; }
+  .persona { flex-basis: calc(100% - 3rem); }
+  .banda-revision button { margin-left: auto; padding: .35rem .6rem; font-size: .75rem; }
+}
+
+.banda-revision { border-radius: var(--imp-radius); }
+.persona p { overflow-wrap: anywhere; }
+.persona .resumen { color: var(--imp-accent-text); font-weight: 600; font-size: .85rem; margin-top: .35rem; }
+@media (max-width: 600px) { .banda-revision { max-height: 40svh; overflow-y: auto; } }

@@ -1,0 +1,21 @@
+<div class="buscador">
+  <label for="people-busqueda">Buscar colaborador por nombre o identificación interna</label>
+  <div class="campo-busqueda">
+    <input id="people-busqueda" type="search" autocomplete="off" [value]="consulta()" (input)="consultaCambio.emit($any($event.target).value)" aria-describedby="people-ayuda-busqueda" />
+    @if (consulta()) { <button type="button" (click)="consultaCambio.emit('')">Limpiar búsqueda</button> }
+  </div>
+  <p id="people-ayuda-busqueda" class="ayuda">Busca en todos los colaboradores por nombre o identificación.</p>
+</div>
+<p class="cantidad" role="status">{{ buscando() ? visibles().length + ' resultados de búsqueda' : 'Últimos tres consultados' }}</p>
+<ul class="resultados" [class.busqueda-activa]="buscando()" tabindex="0" [attr.aria-label]="buscando() ? 'Resultados en todos los colaboradores' : 'Colaboradores recientes'">
+  @for (persona of visibles(); track persona.id) {
+    <li>
+      <button type="button" class="resultado" [attr.aria-pressed]="seleccionadoId() === persona.id" (click)="seleccionar.emit(persona.id)">
+        <app-people-avatar [persona]="persona" />
+        <span class="nombre"><strong>{{ persona.nombre }} {{ persona.apellido }}</strong><span>{{ persona.cargo }} · {{ persona.identificacionInterna }}</span></span>
+      </button>
+    </li>
+  } @empty {
+    <li class="sin-resultados">{{ !colaboradores().length ? 'No hay colaboradores disponibles.' : buscando() ? 'No hay colaboradores que coincidan con tu búsqueda.' : 'Todavía no has consultado colaboradores. Usa el buscador para comenzar.' }}</li>
+  }
+</ul>

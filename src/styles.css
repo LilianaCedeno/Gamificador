@@ -70,3 +70,6 @@ html:has(app-colaborador-dashboard [data-tema="claro"]), body:has(app-colaborado
 .cdk-overlay-backdrop.impulsa-backdrop { background: var(--imp-overlay); }
 .impulsa-dialog-pane { padding: 0; }
 .impulsa-dialog-pane cdk-dialog-container { padding: 0; }
+/* Fondo del documento solo al montar People; no altera Colaborador ni autenticación. */
+html:has(app-people-dashboard), body:has(app-people-dashboard) { background: var(--imp-background); }
+html:has(app-people-dashboard [data-tema="claro"]), body:has(app-people-dashboard [data-tema="claro"]) { background: var(--imp-light-background); }

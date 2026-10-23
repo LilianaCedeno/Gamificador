@@ -1,0 +1,4 @@
+h2 { font-size: 1.25rem; margin-bottom: .75rem; }
+p { color: var(--imp-muted); margin-top: .75rem; }
+.contexto { padding: .75rem; border-left: 2px solid var(--imp-teal); }
+.disponibilidad { display: inline-block; border: 1px solid var(--imp-border); border-radius: .5rem; padding: .75rem; }

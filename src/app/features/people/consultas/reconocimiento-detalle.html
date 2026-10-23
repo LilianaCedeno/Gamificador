@@ -1,0 +1,27 @@
+<dialog #dialogo aria-labelledby="detalle-reconocimiento-titulo" aria-describedby="detalle-alcance" (cancel)="$event.preventDefault(); finalizar()">
+  <header><h2 id="detalle-reconocimiento-titulo">{{ reconocimiento().estado === 'PENDIENTE' ? 'Revisar reconocimiento pendiente' : 'Detalle del reconocimiento' }}</h2><button type="button" (click)="finalizar()" autofocus>Cerrar</button></header>
+  <p id="detalle-alcance">Solo lectura.</p>
+  <dl>
+    <div><dt>Destinatario</dt><dd>{{ nombre(reconocimiento().destinatarioId) }}</dd></div>
+    <div><dt>Emisor</dt><dd>{{ emisor() }}</dd></div>
+    <div><dt>Categoría</dt><dd>{{ categoria(reconocimiento().categoriaId) }}</dd></div>
+    <div><dt>Estado</dt><dd>{{ reconocimiento().estado | titlecase }}</dd></div>
+    <div><dt>Fecha de registro</dt><dd>{{ reconocimiento().fecha | date:'dd/MM/yyyy HH:mm':'UTC' }} UTC</dd></div>
+    <div><dt>Origen</dt><dd>{{ reconocimiento().origen | titlecase }}</dd></div>
+    <div><dt>Referencia</dt><dd>{{ reconocimiento().id }}</dd></div>
+  </dl>
+  <h3>Motivo</h3><p>{{ reconocimiento().motivo }}</p>
+  @if (reconocimiento().origen === 'EXTERNO') { <p>Registrado por {{ nombre($any(reconocimiento()).registradoPorId) }} · {{ $any(reconocimiento()).emisorExterno.correo }}</p> }
+  @if (reconocimiento().estado !== 'PENDIENTE') { <p>Decisión de {{ nombre(reconocimiento().validadoPorId!) }} · {{ reconocimiento().fechaDecision | date:'dd/MM/yyyy HH:mm':'UTC' }} UTC</p> }
+  <h3>Evidencias</h3>
+  <ul>@for (e of reconocimiento().evidencias; track e.id) {
+    <li>{{ e.tipo }} · @if (enlaceDisponible(e.url)) { <a [href]="e.url" target="_blank" rel="noopener noreferrer">{{ e.nombre }} (otra pestaña)</a> } @else { {{ e.nombre }} · archivo no disponible }</li>
+  } @empty { <li>Sin evidencia adjunta.</li> }</ul>
+  @if (reconocimiento().estado === 'PENDIENTE') {
+    <section aria-labelledby="validacion-futura"><h3 id="validacion-futura">Validación · Próximamente</h3><p>Acciones de validación aún no disponibles.</p>
+      <label for="justificacion-rechazo">Justificación del rechazo (obligatoria)</label>
+      <textarea id="justificacion-rechazo" required disabled aria-describedby="validacion-futura" rows="2"></textarea>
+      <div class="acciones"><button type="button" disabled>Aprobar · Próximamente</button><button type="button" disabled>Rechazar · Próximamente</button></div>
+    </section>
+  }
+</dialog>

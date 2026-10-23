@@ -1,0 +1,40 @@
+<header class="gestion-encabezado"><div><h2 id="people-categorias-titulo" tabindex="-1">Gestión de Categorías</h2></div><button type="button" (click)="volver.emit()">Volver a revisión</button></header>
+<div class="gestion-columnas">
+  <section class="imp-card formulario-panel" aria-labelledby="categoria-formulario-titulo">
+    <h3 id="categoria-formulario-titulo">{{ editandoId() ? 'Editar categoría' : 'Nueva categoría' }}</h3>
+    @if (errorGeneral()) { <p class="error" role="alert">{{ errorGeneral() }}</p> }
+    <p class="confirmacion" role="status" aria-live="polite">{{ confirmacion() }}</p>
+    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+      <label for="categoria-nombre">Nombre <span>(obligatorio y único)</span></label>
+      <input id="categoria-nombre" formControlName="nombre" required autocomplete="off" [attr.aria-invalid]="!!errores().nombre" aria-describedby="categoria-error-nombre" />
+      <p id="categoria-error-nombre" class="error-campo">{{ errores().nombre }}</p>
+      <label for="categoria-descripcion">Descripción <span>(obligatoria)</span></label>
+      <textarea id="categoria-descripcion" formControlName="descripcion" required rows="3" [attr.aria-invalid]="!!errores().descripcion" aria-describedby="categoria-error-descripcion"></textarea>
+      <p id="categoria-error-descripcion" class="error-campo">{{ errores().descripcion }}</p>
+      <div class="campos-cortos">
+        <div><label for="categoria-activa">Estado</label><select id="categoria-activa" formControlName="activa"><option [ngValue]="true">Activa</option><option [ngValue]="false">Inactiva</option></select></div>
+        <div><label for="categoria-estrellas">Estrellas por defecto</label><input id="categoria-estrellas" formControlName="estrellasPorDefecto" type="number" min="1" max="5" step="1" required [attr.aria-invalid]="!!errores().estrellasPorDefecto" aria-describedby="categoria-error-estrellas categoria-aviso-estrellas" /></div>
+      </div>
+      <p id="categoria-error-estrellas" class="error-campo">{{ errores().estrellasPorDefecto }}</p>
+      <p id="categoria-aviso-estrellas" class="ayuda">De 1 a 5. Cada reconocimiento aprobado sigue sumando una estrella.</p>
+      <label for="categoria-icono">Icono o referencia visual</label><select id="categoria-icono" formControlName="icono" [attr.aria-invalid]="!!errores().icono" aria-describedby="categoria-error-icono">@for (icono of iconos; track icono.id) { <option [value]="icono.id">{{ icono.nombre }}</option> }</select>
+      <p id="categoria-error-icono" class="error-campo">{{ errores().icono }}</p>
+      <div class="acciones"><button type="button" (click)="cancelar(true)">Cancelar</button><button type="submit" class="imp-primary">{{ editandoId() ? 'Guardar cambios' : 'Crear categoría' }}</button></div>
+    </form>
+  </section>
+  <section class="imp-card disponibles" aria-labelledby="categorias-disponibles-titulo">
+    <div class="cabecera-disponibles">
+      <h3 id="categorias-disponibles-titulo">Categorías disponibles <span>({{ servicio.categorias().length }})</span></h3>
+      <p class="ayuda">Las categorías inactivas permanecen visibles y conservan su historial.</p>
+      <label for="buscar-categorias">Buscar por nombre o descripción</label>
+      <div class="busqueda-categorias"><input id="buscar-categorias" type="search" autocomplete="off" [value]="consulta()" (input)="buscar($any($event.target).value)" aria-describedby="resultados-categorias" />@if (consulta()) { <button type="button" (click)="limpiarBusqueda()">Limpiar búsqueda</button> }</div>
+      <p id="resultados-categorias" class="ayuda" role="status">{{ categoriasFiltradas().length }} resultados de {{ servicio.categorias().length }} categorías</p>
+    </div>
+    <ul class="lista-categorias" tabindex="0" aria-labelledby="categorias-disponibles-titulo" aria-describedby="resultados-categorias">@for (categoria of categoriasFiltradas(); track categoria.id) {
+      <li [class.en-edicion]="editandoId() === categoria.id" [attr.aria-current]="editandoId() === categoria.id ? 'true' : null">
+        <div class="fila-categoria">@if (referencia(categoria.icono).simbolo) { <span class="icono" role="img" [attr.aria-label]="referencia(categoria.icono).nombre">{{ referencia(categoria.icono).simbolo }}</span> }<div><h4>{{ categoria.nombre }}</h4><p>{{ categoria.descripcion }}</p><small>{{ categoria.activa ? 'Activa' : 'Inactiva' }} · Estrellas por defecto: {{ categoria.estrellasPorDefecto }}</small></div></div>
+        <button type="button" (click)="editar(categoria)" [attr.aria-label]="'Editar ' + categoria.nombre">Editar</button>
+      </li>
+    } @empty { <li>{{ servicio.categorias().length ? 'No hay categorías que coincidan con la búsqueda. Prueba otro nombre o descripción.' : 'No hay categorías disponibles. Puedes crear la primera con el formulario.' }}</li> }</ul>
+  </section>
+</div>

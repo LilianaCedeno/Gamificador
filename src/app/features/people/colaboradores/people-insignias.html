@@ -1,0 +1,26 @@
+<div class="insignias" [class.resumen]="resumen()">
+  @for (item of items(); track item.categoria.id) {
+    <article>
+      <div class="medalla" aria-hidden="true">
+        @if (item.progreso.insigniaActual; as actual) {
+          <img [src]="'images/insignias/' + actual.nivel.toLowerCase() + '.png'" alt="" />
+        } @else { <span>☆</span> }
+      </div>
+      <div class="datos">
+        <h3>{{ item.categoria.nombre }}</h3>
+        <p>{{ item.progreso.estrellas }} estrellas · {{ item.progreso.insigniaActual ? (item.progreso.insigniaActual!.nivel | titlecase) : 'Sin insignia obtenida' }}</p>
+        @if (item.progreso.proximaInsignia; as proxima) {
+          <progress [value]="item.progreso.estrellas" [max]="proxima.umbral" [attr.aria-label]="item.categoria.nombre + ': ' + item.progreso.estrellas + ' de ' + proxima.umbral + ' estrellas hacia ' + proxima.nivel"></progress>
+          <p class="meta">{{ item.progreso.estrellas }}/{{ proxima.umbral }} hacia {{ proxima.nivel | titlecase }} · Faltan {{ item.progreso.estrellasFaltantes }}</p>
+        } @else { <p class="meta">Nivel máximo alcanzado</p> }
+      </div>
+      @if (!resumen() && item.progreso.historialAscensos.length) {
+        <details><summary>Historial de ascensos</summary>
+          <ul>@for (ascenso of item.progreso.historialAscensos; track ascenso.insignia.nivel) {
+            <li>{{ ascenso.insignia.nivel | titlecase }} · {{ ascenso.fecha | date:'dd/MM/yyyy':'UTC' }}</li>
+          }</ul>
+        </details>
+      }
+    </article>
+  } @empty { <p>No hay categorías disponibles.</p> }
+</div>

@@ -1,0 +1,6 @@
+<div class="proxima-hu">
+  <h2>{{ titulo() }}</h2>
+  <p>{{ descripcion() }}</p>
+  @if (persona(); as p) { <p class="contexto">Contexto: {{ p.nombre }} {{ p.apellido }} · {{ p.identificacionInterna }}</p> }
+  <p class="disponibilidad">Disponible en próximas historias de usuario</p>
+</div>

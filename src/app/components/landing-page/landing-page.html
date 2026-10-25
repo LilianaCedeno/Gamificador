@@ -1,12 +1,26 @@
-<div class="text-center">
-   <div class="hero">
-      <h1 class="fs-1 mb-0">Inspirate</h1>
-      <p class="mt-0"> Subtítulo disponible</p>
-   </div>
-   <section>
-      <div class="btn-group">
-         <button class="btn btn-sm" type="button" (click)="abrirLogin()">Ingresar</button>
-         <button class="btn btn-sm" type="button" (click)="abrirAbout()">Acerca de</button>
+<main class="landing-shell">
+   <div class="landing-card">
+      <section class="landing-copy" aria-labelledby="landing-title">
+         <a class="landing-brand" href="/" aria-label="IMPULSA, inicio">✦ <span>IMPULSA</span></a>
+         <p class="landing-eyebrow">PORTAL DE LOGROS Y GAMIFICACIÓN</p>
+         <h1 id="landing-title">Inspirate<span>.</span></h1>
+         <p class="landing-description">Un espacio para reconocer cada aporte y celebrar el crecimiento.</p>
+         <div class="landing-actions" aria-label="Acciones de acceso">
+            <button class="landing-button landing-button-primary" type="button" (click)="abrirLogin()">Ingresar <span aria-hidden="true"></span></button>
+            <button class="landing-button landing-button-secondary" type="button" (click)="abrirAbout()">Acerca de</button>
+         </div>
+         <p class="landing-footnote">Cada logro cuenta. Cada aporte impulsa.</p>
+      </section>
+
+      <div class="landing-art" aria-hidden="true">
+         <div class="orbit orbit-outer"></div>
+         <div class="orbit orbit-inner"></div>
+         <div class="art-star">✦</div>
+         <div class="art-medal"><span>✦</span></div>
+         <span class="spark spark-one">✦</span>
+         <span class="spark spark-two">✧</span>
+         <span class="spark spark-three">✧</span>
+         <div class="art-caption"><span class="caption-dot"></span> Tu crecimiento, en movimiento</div>
       </div>
-   </section>
-</div>
+   </div>
+</main>

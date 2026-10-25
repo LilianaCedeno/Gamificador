@@ -17,6 +17,7 @@ describe('InsigniaCard', () => {
     expect(f.nativeElement.querySelectorAll('article > *')).toHaveLength(6);
     expect(f.nativeElement.querySelector('.meta-insignia progress')).not.toBeNull();
     expect(f.nativeElement.querySelector('.ascensos details')).toBeNull();
+    expect(f.nativeElement.querySelector('.sin-ascensos')?.textContent).toContain('Aún no hay ascensos en esta categoría.');
   });
 
   it('muestra una sola insignia actual y detiene el avance en Platino', () => {

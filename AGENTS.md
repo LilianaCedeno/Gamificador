@@ -72,9 +72,8 @@ Certificaciones, Felicitaciones de clientes, Innovación, Mentorías y Capacitac
 - La trazabilidad conserva emisor, destinatario, categoría, motivo, fecha, evidencia, estado, persona que validó y fecha de decisión. Se consulta en el historial del colaborador y dentro del Mantenedor People; **no existe un módulo separado de auditoría**.
 
 ### Insignias
-- Cada categoría tiene su progresión independiente: **Bronce → Plata → Oro**.
-- People determina el umbral base para Bronce; **5 estrellas es el valor inicial de referencia, no un valor fijo**.
-- Umbrales propuestos: Bronce = base; Plata = techo(Bronce × 1,5); Oro = techo(Plata × 1,5). Para base 5: **5, 8, 12**. La política de redondeo debe validarse formalmente con el equipo/backend antes de ser definitiva.
+- Cada categoría tiene su progresión independiente: **Bronce → Plata → Oro → Platino**.
+- Los umbrales de referencia en la demostración actual son **Bronce: 5, Plata: 10, Oro: 15 y Platino: 25 estrellas**. Confirmar con People/backend si deben ser configurables y validar los umbrales definitivos antes de la integración REST.
 - Cada colaborador empieza con **0 estrellas en cada categoría**; antes de Bronce se muestra el progreso hacia la primera insignia (estrella vacía y cantidad acumulada), **sin insignia obtenida**.
 - Mostrar **solo la insignia actual (mayor nivel alcanzado) por categoría** y las estrellas acumuladas debajo; guardar la historia de ascensos para trazabilidad. Las estrellas no se descuentan ni reinician al subir.
 
@@ -88,7 +87,7 @@ Certificaciones, Felicitaciones de clientes, Innovación, Mentorías y Capacitac
 ## 5. Identidad visual y diseño UX/UI aprobado — IMPULSA
 - **Nombre de la aplicación:** IMPULSA. No utilizar «Inspírate» como nombre final en las nuevas pantallas; **no cambiar la landing existente** hasta obtener aprobación para hacerlo.
 - **Paleta de referencia aprobada:** `#061A24` (azul casi negro, encabezados/fondos oscuros), `#0B3A53` (azul profundo, navegación y texto secundario), `#0FA3B1` (turquesa, acentos y progreso), `#B5E2FA` (celeste, fondos destacados), `#F3FAFF` (blanco azulado, fondo general). Usar contraste accesible; puede emplearse blanco puro en tarjetas.
-- Colores de medallas **solo para distinguir niveles**: Bronce, Plata y Oro. No incorporar Platinium. No confundir esos tonos con la paleta corporativa.
+- Colores de medallas **solo para distinguir niveles**: Bronce, Plata, Oro y Platino. No confundir esos tonos con la paleta corporativa.
 - Mantener las variables de diseño compartidas centralizadas (por ejemplo en `src/styles.css` y el tema existente `src/material-theme.scss`) **sin cambiarlas hasta aprobar el alcance de modificación**. Reutilizar tokens de color, espaciado, bordes y tipografía en ambas vistas, sin duplicar reglas globales en cada componente.
 - Cada componente nuevo debe tener archivos **`.ts`, `.html`, `.css` y pruebas `.spec.ts`** separados, usando los patrones del Angular existente. No mezclar HTML o CSS grandes dentro de TypeScript.
 - Mantener los componentes visuales desacoplados de mocks y API; diseño responsive para escritorio, tablet y móvil, navegación por teclado y etiquetas accesibles.
@@ -96,7 +95,7 @@ Certificaciones, Felicitaciones de clientes, Innovación, Mentorías y Capacitac
 ### Dashboard Colaborador — disposición UX/UI aprobada
 1. **Cabecera superior IMPULSA:** identidad y navegación, sin modificar el login/landing de otro integrante.
 2. **Primera sección — perfil:** fotografía, nombre y apellido, cargo, correo y antigüedad **completa (años, meses y días)** calculada desde fecha de ingreso. Mostrar fecha de ingreso si resulta útil en la ficha.
-3. **Segunda sección — insignias y progreso:** tarjetas por categoría con **una sola insignia, la actual**, estrellas acumuladas **debajo de la insignia**, barra de avance y próxima meta cuando exista. Desde 0 estrellas, mostrar una **estrella vacía** y ningún nivel obtenido. Con Oro como nivel máximo, indicar «Nivel máximo alcanzado» sin barra hacia Platinium.
+3. **Segunda sección — insignias y progreso:** tarjetas por categoría con **una sola insignia, la actual**, estrellas acumuladas **debajo de la insignia**, barra de avance y próxima meta cuando exista. Desde 0 estrellas, mostrar una **estrella vacía** y ningún nivel obtenido. Con Platino como nivel máximo, indicar «Nivel máximo alcanzado» sin barra hacia otro nivel.
 4. **Tercera sección — avances:** tarjetas o métricas resumidas con total de estrellas, logros aprobados y progreso mensual, siempre calculadas con datos simulados coherentes.
 5. **Cuarta sección — historial y trazabilidad:** línea de tiempo/listado con fecha, categoría, motivo, emisor y estado (pendiente/aprobado/rechazado); detalle y evidencia si corresponde. Incluir acceso a «Reconocer a un compañero» dentro del dashboard.
 - En escritorio, perfil arriba, insignias debajo y avances e historial en secciones inferiores diferenciadas. En móvil, apilar tarjetas y hacer legible el historial.
@@ -126,7 +125,7 @@ Certificaciones, Felicitaciones de clientes, Innovación, Mentorías y Capacitac
 **Etapa 1 — Modelos y mocks**
 - Modelos tipados: colaborador (incluyendo foto, cargo, fecha de ingreso y antigüedad calculada), categoría, reconocimiento, evidencia, insignia, progreso por categoría y resumen mensual.
 - Datos ficticios de cinco categorías, varios colaboradores, evidencias PDF/JPG/URL, estados `PENDIENTE`/`APROBADO`/`RECHAZADO` y distintos niveles de progreso.
-- Simular base de 5 estrellas configurable por categoría, umbrales **5/8/12** y casos desde 0 estrellas. No inventar endpoints.
+- Simular las cinco categorías, los umbrales de referencia **5/10/15/25** y casos desde 0 estrellas. No inventar endpoints; confirmar antes de integrar si los umbrales deben configurarse por categoría.
 - Comprobar escenarios de progresión y que solo aprobados suman estrellas.
 - Entregable: archivos creados, ejemplos de datos y pruebas. **Sin rutas, pantallas ni cambios en login**.
 

@@ -25,6 +25,8 @@
         <li>{{ ascenso.insignia.nivel | titlecase }} · {{ ascenso.fecha.slice(0, 10) }}</li>
       }</ul>
     </details>
+  } @else {
+    <p class="sin-ascensos">Aún no hay ascensos en esta categoría.</p>
   }
   </div>
 </article>
